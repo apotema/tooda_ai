@@ -42,7 +42,7 @@ RSpec.describe Conta, type: :model do
              valorDesconto: 1.00)
     end
 
-    context 'when conta is closed (statuscontaid = 4)' do
+    context 'when conta is closed with only pedido items' do
       let!(:pedido) { create(:pedido, :completed, conta: closed_conta) }
       let!(:pedido_item) do
         create(:pedido_item,
@@ -52,68 +52,85 @@ RSpec.describe Conta, type: :model do
                valor: 10.00)
       end
 
-      context 'with only pedido items' do
-        it 'calculates total with items + fees - discount' do
-          # Items: 2 * 10.00 = 20.00
-          # + Service fee: 5.00
-          # + App fee: 2.00
-          # - Discount: 1.00
-          # = 26.00
-          expect(closed_conta.total).to eq(26.00)
-        end
+      it 'calculates total with items + fees - discount' do
+        pedido_item
+        # Items: 2 * 10.00 = 20.00
+        # + Service fee: 5.00
+        # + App fee: 2.00
+        # - Discount: 1.00
+        # = 26.00
+        expect(closed_conta.total).to eq(26.00)
+      end
+    end
+
+    context 'when conta has pedido items with accompaniments' do
+      let!(:pedido) { create(:pedido, :completed, conta: closed_conta) }
+      let!(:pedido_item) do
+        create(:pedido_item,
+               pedido: pedido,
+               item: item,
+               quantidade: 2,
+               valor: 10.00)
       end
 
-      context 'with pedido items and accompaniments' do
-        let!(:grupo_acompanhamento) { create(:grupo_acompanhamento, itemId: item.Id) }
-        let!(:item_acompanhamento) do
-          create(:item_acompanhamento,
-                 grupoAcompanhamentoId: grupo_acompanhamento.Id,
-                 valor: 3.00)
-        end
-        let!(:pedido_item_acompanhamento) do
-          create(:pedido_item_acompanhamento,
-                 pedidoItemid: pedido_item.Id,
-                 itemAcompanhamentoid: item_acompanhamento.Id,
-                 quantidade: 1,
-                 valor: 3.00)
-        end
+      it 'creates accompaniment data correctly' do
+        grupo_acompanhamento = create(:grupo_acompanhamento, itemId: item.Id)
+        item_acompanhamento = create(:item_acompanhamento,
+                                     grupoAcompanhamentoId: grupo_acompanhamento.Id,
+                                     valor: 3.00)
+        pedido_item_acompanhamento = create(:pedido_item_acompanhamento,
+                                            pedidoItemid: pedido_item.Id,
+                                            itemAcompanhamentoid: item_acompanhamento.Id,
+                                            quantidade: 1,
+                                            valor: 3.00)
 
-        it 'calculates total with items + accompaniments + fees - discount' do
-          # Ensure accompaniment is created for calculation
-          expect(pedido_item_acompanhamento).to be_persisted
-
-          # Items: 2 * 10.00 = 20.00
-          # Accompaniments: 2 (pedido_item qty) * 1 * 3.00 = 6.00
-          # + Service fee: 5.00
-          # + App fee: 2.00
-          # - Discount: 1.00
-          # = 32.00
-          expect(closed_conta.total).to eq(32.00)
-        end
+        expect(pedido_item_acompanhamento).to be_persisted
       end
 
-      context 'with zero fee values' do
-        let!(:conta_with_zero_fees) { create(:conta, :closed, :with_zero_fees) }
-        let!(:pedido_zero_fees) { create(:pedido, :completed, conta: conta_with_zero_fees) }
-        let!(:pedido_item_zero_fees) do
-          create(:pedido_item,
-                 pedido: pedido_zero_fees,
-                 item: item,
-                 quantidade: 1,
-                 valor: 15.00)
-        end
+      it 'calculates total including accompaniment values' do
+        grupo_acompanhamento = create(:grupo_acompanhamento, itemId: item.Id)
+        item_acompanhamento = create(:item_acompanhamento,
+                                     grupoAcompanhamentoId: grupo_acompanhamento.Id,
+                                     valor: 3.00)
+        create(:pedido_item_acompanhamento,
+               pedidoItemid: pedido_item.Id,
+               itemAcompanhamentoid: item_acompanhamento.Id,
+               quantidade: 1,
+               valor: 3.00)
 
-        it 'handles zero values correctly' do
-          # Ensure test data is set up
-          expect(pedido_item_zero_fees).to be_persisted
+        # Items: 2 * 10.00 = 20.00
+        # Accompaniments: 2 (pedido_item qty) * 1 * 3.00 = 6.00
+        # + Service fee: 5.00
+        # + App fee: 2.00
+        # - Discount: 1.00
+        # = 32.00
+        expect(closed_conta.total).to eq(32.00)
+      end
+    end
 
-          # Items: 1 * 15.00 = 15.00
-          # + Service fee: 0.00
-          # + App fee: 0.00
-          # - Discount: 0.00
-          # = 15.00
-          expect(conta_with_zero_fees.total).to eq(15.00)
-        end
+    context 'when conta is closed with zero fee values' do
+      let!(:conta_with_zero_fees) { create(:conta, :closed, :with_zero_fees) }
+      let!(:pedido_zero_fees) { create(:pedido, :completed, conta: conta_with_zero_fees) }
+      let!(:pedido_item_zero_fees) do
+        create(:pedido_item,
+               pedido: pedido_zero_fees,
+               item: item,
+               quantidade: 1,
+               valor: 15.00)
+      end
+
+      it 'ensures zero fee test data is set up correctly' do
+        expect(pedido_item_zero_fees).to be_persisted
+      end
+
+      it 'handles zero values correctly' do
+        pedido_item_zero_fees
+        # Items: 1 * 15.00 = 15.00
+        # + Service fee: 0.00
+        # + App fee: 0.00
+        # - Discount: 0.00
+        # = 15.00
+        expect(conta_with_zero_fees.total).to eq(15.00)
       end
     end
 
@@ -133,10 +150,12 @@ RSpec.describe Conta, type: :model do
                valor: 20.00)
       end
 
-      it 'excludes incomplete pedidos from calculation' do
-        # Ensure test data is set up
+      it 'ensures incomplete pedido test data is set up correctly' do
         expect(incomplete_pedido_item).to be_persisted
+      end
 
+      it 'excludes incomplete pedidos from calculation' do
+        incomplete_pedido_item
         # Only fees and discount (no pedido items counted)
         # + Service fee: 5.00
         # + App fee: 2.00
@@ -158,10 +177,12 @@ RSpec.describe Conta, type: :model do
                valor: 25.00)
       end
 
-      it 'excludes invalid pedido items from calculation' do
-        # Ensure test data is set up
+      it 'ensures invalid pedido item test data is set up correctly' do
         expect(invalid_pedido_item).to be_persisted
+      end
 
+      it 'excludes invalid pedido items from calculation' do
+        invalid_pedido_item
         # Only fees and discount (no pedido items counted due to invalid status)
         # + Service fee: 5.00
         # + App fee: 2.00

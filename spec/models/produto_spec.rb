@@ -15,10 +15,12 @@ RSpec.describe Produto, type: :model do
 
   describe 'scopes' do
     describe '.active' do
-      it 'returns products that are active and not excluded' do
-        scope_sql = described_class.active.to_sql
-        expect(scope_sql).to include('ativo')
-        expect(scope_sql).to include('Excluido')
+      it 'includes ativo condition in SQL' do
+        expect(described_class.active.to_sql).to include('ativo')
+      end
+
+      it 'includes Excluido condition in SQL' do
+        expect(described_class.active.to_sql).to include('Excluido')
       end
     end
 

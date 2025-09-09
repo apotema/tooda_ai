@@ -47,10 +47,15 @@ RSpec.describe Usuario, type: :model do
     it { is_expected.to validate_presence_of(:cpf) }
 
     it 'validates uniqueness of cpf' do
-      expect(usuario).to be_valid
       usuario.save!
       duplicate = usuario.dup
       expect(duplicate).not_to be_valid
+    end
+
+    it 'adds error message for duplicate cpf' do
+      usuario.save!
+      duplicate = usuario.dup
+      duplicate.valid?
       expect(duplicate.errors[:cpf]).to include('has already been taken')
     end
   end
