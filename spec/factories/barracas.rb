@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :barraca do
     sequence(:Id) { |n| n }
     sequence(:Nome) { |n| "Barraca #{n}" }
-    sequence(:Numero) { |n| n.to_s }
+    sequence(:Numero, &:to_s)
     Latitude { -23.5 }
     Longitude { -46.6 }
     PercentualComissao { 10.0 }

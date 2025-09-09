@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:Id) { |n| n }
     sequence(:email) { |n| "user#{n}@example.com" }
     sequence(:nome) { |n| "User #{n}" }
-    sequence(:cpf) { |n| "#{n.to_s.rjust(11, '0')}" }
+    sequence(:cpf) { |n| n.to_s.rjust(11, '0').to_s }
     TermoDeUsoAceito { true }
 
     after(:build) do |usuario|

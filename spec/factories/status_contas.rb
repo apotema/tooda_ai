@@ -10,7 +10,7 @@ FactoryBot.define do
 
     trait :fechada do
       # Use find_or_create to avoid duplicates
-      to_create { |instance| StatusConta.find_or_create_by(Id: 4) { |sc| sc.Status = 'Fechada' } }
+      to_create { |_instance| StatusConta.find_or_create_by(Id: 4) { |sc| sc.Status = 'Fechada' } }
       Id { 4 }
       Status { 'Fechada' }
     end

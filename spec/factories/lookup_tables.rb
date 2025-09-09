@@ -26,13 +26,13 @@ FactoryBot.define do
 
   factory :status_pedido do
     # Use find_or_create to avoid duplicates for default
-    to_create { |instance| StatusPedido.find_or_create_by(Id: 1) { |sp| sp.Status = 'Pendente' } }
+    to_create { |_instance| StatusPedido.find_or_create_by(Id: 1) { |sp| sp.Status = 'Pendente' } }
     Id { 1 }
     Status { 'Pendente' }
 
     trait :completed do
       # Use find_or_create to avoid duplicates
-      to_create { |instance| StatusPedido.find_or_create_by(Id: 4) { |sp| sp.Status = 'Finalizado' } }
+      to_create { |_instance| StatusPedido.find_or_create_by(Id: 4) { |sp| sp.Status = 'Finalizado' } }
       Id { 4 }
       Status { 'Finalizado' }
     end
@@ -40,20 +40,20 @@ FactoryBot.define do
 
   factory :status_pedido_item do
     # Use find_or_create to avoid duplicates for default (using ID 2 to avoid conflicts)
-    to_create { |instance| StatusPedidoItem.find_or_create_by(Id: 2) { |spi| spi.Status = 'Confirmado' } }
+    to_create { |_instance| StatusPedidoItem.find_or_create_by(Id: 2) { |spi| spi.Status = 'Confirmado' } }
     Id { 2 }
     Status { 'Confirmado' }
 
     trait :confirmed do
       # Use find_or_create to avoid duplicates
-      to_create { |instance| StatusPedidoItem.find_or_create_by(Id: 1) { |spi| spi.Status = 'Confirmado' } }
+      to_create { |_instance| StatusPedidoItem.find_or_create_by(Id: 1) { |spi| spi.Status = 'Confirmado' } }
       Id { 1 }
       Status { 'Confirmado' }
     end
 
     trait :cancelled do
       # Use find_or_create to avoid duplicates
-      to_create { |instance| StatusPedidoItem.find_or_create_by(Id: 3) { |spi| spi.Status = 'Cancelado' } }
+      to_create { |_instance| StatusPedidoItem.find_or_create_by(Id: 3) { |spi| spi.Status = 'Cancelado' } }
       Id { 3 }
       Status { 'Cancelado' }
     end

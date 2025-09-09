@@ -1,8 +1,84 @@
 # Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+# inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
 # Overwrite or add rules to create your own house style
 #
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
 # Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
+
+
+AllCops:
+  SuggestExtensions: false
+  NewCops: enable
+  Exclude:
+    - 'vendor/'
+    - vendor/bundle/**/*
+    - 'db/migrate/*.rb'
+    - 'db/schema.rb'
+    - 'bin/*'
+    - 'config/*/*.rb'
+    - 'lib/engines/admin_engine/admin_engine.gemspec'
+    - 'lib/engines/admin_engine/config/initializers/simple_form.rb'
+    - 'lib/engines/admin_engine/config/initializers/simple_form_bootstrap.rb'
+    - 'node_modules/**/*'
+
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-performance
+  - rubocop-factory_bot
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+RSpec/MultipleExpectations:
+  Enabled: true
+  Exclude:
+    - 'spec/features/**/*'
+
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/features/**/*'
+
+# Disable problematic RSpec cops for integration specs
+RSpec/MultipleMemoizedHelpers:
+  Exclude:
+    - 'spec/integration/**/*'
+
+RSpec/VariableName:
+  Exclude:
+    - 'spec/integration/**/*'
+
+Metrics/BlockLength:
+  AllowedMethods:
+    - describe
+    - context
+    - resource
+    - guard
+    - task
+    - register
+    - post
+    - put
+    - get
+    - delete
+    - namespace
+    - show
+    - attributes_table
+    - define
+    - factory
+    - trait
+    - draw
+
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - test
+    - production
+    - staging
