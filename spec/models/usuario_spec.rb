@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Usuario, type: :model do
   # Create supporting records for validations
-  subject do
+  subject(:usuario) do
     described_class.new(
       email: 'test@example.com',
       nome: 'Test User',
@@ -26,7 +26,7 @@ RSpec.describe Usuario, type: :model do
     it { is_expected.to have_many(:contas).class_name('Conta').with_foreign_key('usuarioid').dependent(:destroy) }
 
     it {
-      expect(subject).to have_many(:usuario_barracas)
+      expect(usuario).to have_many(:usuario_barracas)
         .class_name('UsuarioBarraca')
         .with_foreign_key('usuarioid')
         .dependent(:destroy)
@@ -37,7 +37,7 @@ RSpec.describe Usuario, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:email) }
-    it { expect(subject).to validate_uniqueness_of(:email).case_insensitive }
+    it { expect(usuario).to validate_uniqueness_of(:email).case_insensitive }
     it { is_expected.to allow_value('test@example.com').for(:email) }
     it { is_expected.not_to allow_value('invalid_email').for(:email) }
 
@@ -47,9 +47,9 @@ RSpec.describe Usuario, type: :model do
     it { is_expected.to validate_presence_of(:cpf) }
 
     it 'validates uniqueness of cpf' do
-      expect(subject).to be_valid
-      subject.save!
-      duplicate = subject.dup
+      expect(usuario).to be_valid
+      usuario.save!
+      duplicate = usuario.dup
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:cpf]).to include('has already been taken')
     end

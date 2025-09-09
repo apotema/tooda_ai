@@ -79,6 +79,9 @@ RSpec.describe Conta, type: :model do
         end
 
         it 'calculates total with items + accompaniments + fees - discount' do
+          # Ensure accompaniment is created for calculation
+          expect(pedido_item_acompanhamento).to be_persisted
+
           # Items: 2 * 10.00 = 20.00
           # Accompaniments: 2 (pedido_item qty) * 1 * 3.00 = 6.00
           # + Service fee: 5.00
@@ -101,6 +104,9 @@ RSpec.describe Conta, type: :model do
         end
 
         it 'handles zero values correctly' do
+          # Ensure test data is set up
+          expect(pedido_item_zero_fees).to be_persisted
+
           # Items: 1 * 15.00 = 15.00
           # + Service fee: 0.00
           # + App fee: 0.00
@@ -113,7 +119,7 @@ RSpec.describe Conta, type: :model do
 
     context 'when conta is not closed (statuscontaid != 4)' do
       it 'returns 0' do
-        expect(subject.total).to eq(0)
+        expect(conta.total).to eq(0)
       end
     end
 
@@ -128,6 +134,9 @@ RSpec.describe Conta, type: :model do
       end
 
       it 'excludes incomplete pedidos from calculation' do
+        # Ensure test data is set up
+        expect(incomplete_pedido_item).to be_persisted
+
         # Only fees and discount (no pedido items counted)
         # + Service fee: 5.00
         # + App fee: 2.00
@@ -150,6 +159,9 @@ RSpec.describe Conta, type: :model do
       end
 
       it 'excludes invalid pedido items from calculation' do
+        # Ensure test data is set up
+        expect(invalid_pedido_item).to be_persisted
+
         # Only fees and discount (no pedido items counted due to invalid status)
         # + Service fee: 5.00
         # + App fee: 2.00

@@ -1,20 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe Item, type: :model do
+  subject(:item) { build(:item) }
+
   describe 'associations' do
     it { is_expected.to belong_to(:barraca).class_name('Barraca').with_foreign_key('barracaid') }
     it { is_expected.to belong_to(:produto).class_name('Produto').with_foreign_key('produtoid') }
     it { is_expected.to belong_to(:status_item).class_name('StatusItem').with_foreign_key('statusItemId') }
 
     it {
-      expect(subject).to belong_to(:barraca_categoria)
+      expect(item).to belong_to(:barraca_categoria)
         .class_name('BarracaCategoria')
         .with_foreign_key('BarracaCategoriaId')
         .optional
     }
 
     it {
-      expect(subject).to have_many(:pedido_items)
+      expect(item).to have_many(:pedido_items)
         .class_name('PedidoItem')
         .with_foreign_key('itemid')
         .dependent(:destroy)

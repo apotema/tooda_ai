@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe StatusPedidoItem, type: :model do
+  subject(:status_pedido_item) { build(:status_pedido_item) }
+
   describe 'associations' do
     it {
-      expect(subject).to have_many(:pedido_items)
+      expect(status_pedido_item).to have_many(:pedido_items)
         .class_name('PedidoItem')
         .with_foreign_key('StatusPedidoItemId')
         .dependent(:restrict_with_error)

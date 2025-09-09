@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Pedido, type: :model do
+  subject(:pedido) { build(:pedido) }
+
   describe 'associations' do
     it { is_expected.to belong_to(:conta).class_name('Conta').with_foreign_key('contaid') }
     it { is_expected.to belong_to(:status_pedido).class_name('StatusPedido').with_foreign_key('statuspedidoid') }
@@ -8,7 +10,7 @@ RSpec.describe Pedido, type: :model do
     it { is_expected.to belong_to(:operador).class_name('Operador').with_foreign_key('operadorId').optional }
 
     it {
-      expect(subject).to have_many(:pedido_items)
+      expect(pedido).to have_many(:pedido_items)
         .class_name('PedidoItem')
         .with_foreign_key('pedidoid')
         .dependent(:destroy)
