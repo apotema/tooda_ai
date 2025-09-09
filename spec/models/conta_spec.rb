@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Conta, type: :model do
-  subject { build(:conta) }
+  subject(:conta) { build(:conta) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:barraca).class_name('Barraca').with_foreign_key('barracaid') }
@@ -11,7 +11,10 @@ RSpec.describe Conta, type: :model do
     it { is_expected.to belong_to(:operador).class_name('Operador').with_foreign_key('operadorId').optional }
 
     it {
-      expect(subject).to belong_to(:cartao_credito).class_name('CartaoCredito').with_foreign_key('CartaoCreditoId').optional
+      expect(conta).to belong_to(:cartao_credito)
+        .class_name('CartaoCredito')
+        .with_foreign_key('CartaoCreditoId')
+        .optional
     }
 
     it { is_expected.to have_many(:pedidos).class_name('Pedido').with_foreign_key('contaid').dependent(:destroy) }
@@ -21,7 +24,7 @@ RSpec.describe Conta, type: :model do
     it { is_expected.to validate_presence_of(:numero) }
     it { is_expected.to validate_presence_of(:data) }
     it { is_expected.to validate_presence_of(:identificadorConta) }
-    it { expect(subject).to validate_uniqueness_of(:identificadorConta).case_insensitive }
+    it { expect(conta).to validate_uniqueness_of(:identificadorConta).case_insensitive }
   end
 
   describe 'table configuration' do

@@ -3,7 +3,10 @@ require 'rails_helper'
 RSpec.describe StatusPedidoItem, type: :model do
   describe 'associations' do
     it {
-      expect(subject).to have_many(:pedido_items).class_name('PedidoItem').with_foreign_key('StatusPedidoItemId').dependent(:restrict_with_error)
+      expect(subject).to have_many(:pedido_items)
+        .class_name('PedidoItem')
+        .with_foreign_key('StatusPedidoItemId')
+        .dependent(:restrict_with_error)
     }
   end
 

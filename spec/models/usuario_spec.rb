@@ -26,7 +26,10 @@ RSpec.describe Usuario, type: :model do
     it { is_expected.to have_many(:contas).class_name('Conta').with_foreign_key('usuarioid').dependent(:destroy) }
 
     it {
-      expect(subject).to have_many(:usuario_barracas).class_name('UsuarioBarraca').with_foreign_key('usuarioid').dependent(:destroy)
+      expect(subject).to have_many(:usuario_barracas)
+        .class_name('UsuarioBarraca')
+        .with_foreign_key('usuarioid')
+        .dependent(:destroy)
     }
 
     it { is_expected.to have_many(:barracas).through(:usuario_barracas) }

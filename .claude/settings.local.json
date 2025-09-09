@@ -17,7 +17,11 @@
       "Bash(bundle exec rspec:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(bundle exec rubocop:*)"
+      "Bash(bundle exec rubocop:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head:*)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

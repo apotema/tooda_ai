@@ -2,14 +2,15 @@ class Conta < ApplicationRecord
   self.table_name = 'Conta'
 
   # Associations
-  belongs_to :barraca, class_name: 'Barraca', foreign_key: 'barracaid'
-  belongs_to :usuario, class_name: 'Usuario', foreign_key: 'usuarioid'
-  belongs_to :status_conta, class_name: 'StatusConta', foreign_key: 'statuscontaid'
-  belongs_to :forma_pagamento, class_name: 'FormaPagamento', foreign_key: 'formapagamentoid'
-  belongs_to :operador, class_name: 'Operador', foreign_key: 'operadorId', optional: true
-  belongs_to :cartao_credito, class_name: 'CartaoCredito', foreign_key: 'CartaoCreditoId', optional: true
+  belongs_to :barraca, class_name: 'Barraca', foreign_key: 'barracaid', inverse_of: :contas
+  belongs_to :usuario, class_name: 'Usuario', foreign_key: 'usuarioid', inverse_of: :contas
+  belongs_to :status_conta, class_name: 'StatusConta', foreign_key: 'statuscontaid', inverse_of: false
+  belongs_to :forma_pagamento, class_name: 'FormaPagamento', foreign_key: 'formapagamentoid', inverse_of: :contas
+  belongs_to :operador, class_name: 'Operador', foreign_key: 'operadorId', optional: true, inverse_of: false
+  belongs_to :cartao_credito, class_name: 'CartaoCredito', foreign_key: 'CartaoCreditoId', optional: true,
+                              inverse_of: :contas
 
-  has_many :pedidos, class_name: 'Pedido', foreign_key: 'contaid', dependent: :destroy
+  has_many :pedidos, class_name: 'Pedido', foreign_key: 'contaid', dependent: :destroy, inverse_of: :conta
 
   # Validations
   validates :numero, presence: true
@@ -35,7 +36,8 @@ class Conta < ApplicationRecord
       accompaniments_total = valid_pedidos
                              .joins(pedido_items: :pedido_item_acompanhamentos)
                              .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
-                             .sum('pedido_items.quantidade * PedidoItemAcompanhamento.quantidade * PedidoItemAcompanhamento.valor')
+                             .sum('pedido_items.quantidade * PedidoItemAcompanhamento.quantidade * ' \
+                                  'PedidoItemAcompanhamento.valor')
     rescue ActiveRecord::StatementInvalid
       # If there are no accompaniments or table doesn't exist, set to 0
       accompaniments_total = 0

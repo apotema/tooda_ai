@@ -7,11 +7,17 @@ RSpec.describe Item, type: :model do
     it { is_expected.to belong_to(:status_item).class_name('StatusItem').with_foreign_key('statusItemId') }
 
     it {
-      expect(subject).to belong_to(:barraca_categoria).class_name('BarracaCategoria').with_foreign_key('BarracaCategoriaId').optional
+      expect(subject).to belong_to(:barraca_categoria)
+        .class_name('BarracaCategoria')
+        .with_foreign_key('BarracaCategoriaId')
+        .optional
     }
 
     it {
-      expect(subject).to have_many(:pedido_items).class_name('PedidoItem').with_foreign_key('itemid').dependent(:destroy)
+      expect(subject).to have_many(:pedido_items)
+        .class_name('PedidoItem')
+        .with_foreign_key('itemid')
+        .dependent(:destroy)
     }
   end
 

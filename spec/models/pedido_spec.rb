@@ -8,7 +8,10 @@ RSpec.describe Pedido, type: :model do
     it { is_expected.to belong_to(:operador).class_name('Operador').with_foreign_key('operadorId').optional }
 
     it {
-      expect(subject).to have_many(:pedido_items).class_name('PedidoItem').with_foreign_key('pedidoid').dependent(:destroy)
+      expect(subject).to have_many(:pedido_items)
+        .class_name('PedidoItem')
+        .with_foreign_key('pedidoid')
+        .dependent(:destroy)
     }
   end
 

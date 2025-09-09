@@ -2,14 +2,16 @@ class Barraca < ApplicationRecord
   self.table_name = 'Barraca'
 
   # Associations
-  belongs_to :praia, class_name: 'Praia', foreign_key: 'PraiaId'
-  belongs_to :status_barraca, class_name: 'StatusBarraca', foreign_key: 'StatusBarracaId'
-  belongs_to :tipo_area_cobertura, class_name: 'TipoAreaCobertura', foreign_key: 'TipoAreaCoberturaId'
+  belongs_to :praia, class_name: 'Praia', foreign_key: 'PraiaId', inverse_of: false
+  belongs_to :status_barraca, class_name: 'StatusBarraca', foreign_key: 'StatusBarracaId', inverse_of: false
+  belongs_to :tipo_area_cobertura, class_name: 'TipoAreaCobertura', foreign_key: 'TipoAreaCoberturaId',
+                                   inverse_of: false
 
-  has_many :contas, class_name: 'Conta', foreign_key: 'barracaid', dependent: :destroy
-  has_many :items, class_name: 'Item', foreign_key: 'barracaid', dependent: :destroy
-  has_many :operadors, class_name: 'Operador', foreign_key: 'BarracaId', dependent: :destroy
-  has_many :usuario_barracas, class_name: 'UsuarioBarraca', foreign_key: 'barracaid', dependent: :destroy
+  has_many :contas, class_name: 'Conta', foreign_key: 'barracaid', dependent: :destroy, inverse_of: :barraca
+  has_many :items, class_name: 'Item', foreign_key: 'barracaid', dependent: :destroy, inverse_of: :barraca
+  has_many :operadors, class_name: 'Operador', foreign_key: 'BarracaId', dependent: :destroy, inverse_of: false
+  has_many :usuario_barracas, class_name: 'UsuarioBarraca', foreign_key: 'barracaid', dependent: :destroy,
+                              inverse_of: :barraca
   has_many :usuarios, through: :usuario_barracas
 
   # Validations

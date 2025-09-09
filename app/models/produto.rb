@@ -2,10 +2,10 @@ class Produto < ApplicationRecord
   self.table_name = 'Produto'
 
   # Associations
-  belongs_to :tipo_produto, class_name: 'TipoProduto', foreign_key: 'tipoProdutoid'
-  belongs_to :barraca, class_name: 'Barraca', foreign_key: 'BarracaId', optional: true
+  belongs_to :tipo_produto, class_name: 'TipoProduto', foreign_key: 'tipoProdutoid', inverse_of: :produtos
+  belongs_to :barraca, class_name: 'Barraca', foreign_key: 'BarracaId', optional: true, inverse_of: false
 
-  has_many :items, class_name: 'Item', foreign_key: 'produtoid', dependent: :destroy
+  has_many :items, class_name: 'Item', foreign_key: 'produtoid', dependent: :destroy, inverse_of: :produto
 
   # Validations
   validates :nome, presence: true, length: { maximum: 255 }

@@ -1,12 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe Barraca, type: :model do
+  subject(:barraca) { build(:barraca) }
+
   describe 'associations' do
     it { is_expected.to belong_to(:praia).class_name('Praia').with_foreign_key('PraiaId') }
     it { is_expected.to belong_to(:status_barraca).class_name('StatusBarraca').with_foreign_key('StatusBarracaId') }
 
     it {
-      expect(subject).to belong_to(:tipo_area_cobertura).class_name('TipoAreaCobertura').with_foreign_key('TipoAreaCoberturaId')
+      expect(barraca).to belong_to(:tipo_area_cobertura)
+        .class_name('TipoAreaCobertura')
+        .with_foreign_key('TipoAreaCoberturaId')
     }
 
     it { is_expected.to have_many(:contas).class_name('Conta').with_foreign_key('barracaid').dependent(:destroy) }
@@ -14,7 +18,10 @@ RSpec.describe Barraca, type: :model do
     it { is_expected.to have_many(:operadors).class_name('Operador').with_foreign_key('BarracaId').dependent(:destroy) }
 
     it {
-      expect(subject).to have_many(:usuario_barracas).class_name('UsuarioBarraca').with_foreign_key('barracaid').dependent(:destroy)
+      expect(barraca).to have_many(:usuario_barracas)
+        .class_name('UsuarioBarraca')
+        .with_foreign_key('barracaid')
+        .dependent(:destroy)
     }
 
     it { is_expected.to have_many(:usuarios).through(:usuario_barracas) }
@@ -33,7 +40,9 @@ RSpec.describe Barraca, type: :model do
     it { is_expected.to validate_numericality_of(:Longitude) }
 
     it {
-      expect(subject).to validate_numericality_of(:PercentualComissao).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100)
+      expect(barraca).to validate_numericality_of(:PercentualComissao)
+        .is_greater_than_or_equal_to(0)
+        .is_less_than_or_equal_to(100)
     }
   end
 
