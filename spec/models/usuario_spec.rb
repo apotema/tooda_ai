@@ -1,0 +1,54 @@
+require 'rails_helper'
+
+RSpec.describe Usuario, type: :model do
+  # Create supporting records for validations
+  let!(:status_usuario) { StatusUsuario.create!(Id: 1, Status: 'Ativo') }
+  let!(:tipo_acesso) { TipoAcesso.create!(Id: 1, Tipo: 'Admin') }
+  let!(:tipo_usuario) { TipoUsuario.create!(Id: 1, Tipo: 'Cliente') }
+  
+  subject do
+    Usuario.new(
+      email: 'test@example.com',
+      nome: 'Test User',
+      cpf: '12345678901',
+      TermoDeUsoAceito: true,
+      StatusUsuarioId: status_usuario.Id,
+      tipoacessoid: tipo_acesso.Id,
+      tipousuarioid: tipo_usuario.Id
+    )
+  end
+  describe 'associations' do
+    it { should belong_to(:status_usuario).class_name('StatusUsuario').with_foreign_key('StatusUsuarioId') }
+    it { should belong_to(:tipo_acesso).class_name('TipoAcesso').with_foreign_key('tipoacessoid') }
+    it { should belong_to(:tipo_usuario).class_name('TipoUsuario').with_foreign_key('tipousuarioid') }
+    
+    it { should have_many(:contas).class_name('Conta').with_foreign_key('usuarioid').dependent(:destroy) }
+    it { should have_many(:usuario_barracas).class_name('UsuarioBarraca').with_foreign_key('usuarioid').dependent(:destroy) }
+    it { should have_many(:barracas).through(:usuario_barracas) }
+  end
+
+  describe 'validations' do
+    it { should validate_presence_of(:email) }
+    it { expect(subject).to validate_uniqueness_of(:email).case_insensitive }
+    it { should allow_value('test@example.com').for(:email) }
+    it { should_not allow_value('invalid_email').for(:email) }
+    
+    it { should validate_presence_of(:nome) }
+    it { should validate_length_of(:nome).is_at_most(255) }
+    
+    it { should validate_presence_of(:cpf) }
+    it 'validates uniqueness of cpf' do
+      expect(subject).to be_valid
+      subject.save!
+      duplicate = subject.dup
+      expect(duplicate).to_not be_valid
+      expect(duplicate.errors[:cpf]).to include('has already been taken')
+    end
+  end
+
+  describe 'table configuration' do
+    it 'uses the correct table name' do
+      expect(Usuario.table_name).to eq('Usuario')
+    end
+  end
+end
