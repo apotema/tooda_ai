@@ -1,45 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Conta, type: :model do
-  # Create supporting records for validations
-  let!(:status_usuario) { StatusUsuario.create!(Id: 1, Status: 'Ativo') }
-  let!(:tipo_acesso) { TipoAcesso.create!(Id: 1, Tipo: 'Admin') }
-  let!(:tipo_usuario) { TipoUsuario.create!(Id: 1, Tipo: 'Cliente') }
-  let!(:praia) { Praia.create!(Id: 1, Nome: 'Praia Test', Cidade: 'Recife', Uf: 'PE') }
-  let!(:status_barraca) { StatusBarraca.create!(Id: 1, Status: 'Ativo') }
-  let!(:tipo_area_cobertura) { TipoAreaCobertura.create!(Id: 1, Tipo: 'Coberto') }
-  let!(:tipo_barraca) { TipoBarraca.create!(Id: 1, Tipo: 'Normal') }
-  let!(:status_conta) { StatusConta.create!(Id: 1, Status: 'Aberta') }
-  let!(:forma_pagamento) { FormaPagamento.create!(Id: 1, Tipo: 'Dinheiro', ativo: true, Codigo: 'DIN') }
-  
-  let!(:usuario) { Usuario.create!(
-    Id: 1, email: 'test@example.com', nome: 'Test User', cpf: '12345678901',
-    TermoDeUsoAceito: true, StatusUsuarioId: status_usuario.Id,
-    tipoacessoid: tipo_acesso.Id, tipousuarioid: tipo_usuario.Id
-  )}
-  
-  let!(:barraca) { Barraca.create!(
-    Id: 1, Nome: 'Barraca Test', Numero: '1', Latitude: -23.5, Longitude: -46.6,
-    PraiaId: praia.Id, StatusBarracaId: status_barraca.Id, 
-    TipoAreaCoberturaId: tipo_area_cobertura.Id, PercentualComissao: 10.0, 
-    Ordem: 1, TipoBarracaId: tipo_barraca.Id, PercentualComissaoCartao: 5.0,
-    DataInclusao: Time.current
-  )}
-  
-  subject do
-    Conta.new(
-      numero: 'C001',
-      data: Time.current,
-      identificadorConta: 'CONTA_UNIQUE_001',
-      barracaid: barraca.Id,
-      usuarioid: usuario.Id,
-      statuscontaid: status_conta.Id,
-      formapagamentoid: forma_pagamento.Id,
-      valorTaxaServico: 2.50,
-      valorTaxaApp: 1.00,
-      valorDesconto: 0.00
-    )
-  end
+  subject { build(:conta) }
   describe 'associations' do
     it { should belong_to(:barraca).class_name('Barraca').with_foreign_key('barracaid') }
     it { should belong_to(:usuario).class_name('Usuario').with_foreign_key('usuarioid') }
@@ -61,6 +23,126 @@ RSpec.describe Conta, type: :model do
   describe 'table configuration' do
     it 'uses the correct table name' do
       expect(Conta.table_name).to eq('Conta')
+    end
+  end
+
+  describe '#total' do
+    let!(:item) { create(:item) }
+    let!(:closed_conta) { create(:conta, :closed, 
+      valorTaxaServico: 5.00, 
+      valorTaxaApp: 2.00, 
+      valorDesconto: 1.00
+    ) }
+
+    context 'when conta is closed (statuscontaid = 4)' do
+      let!(:pedido) { create(:pedido, :completed, conta: closed_conta) }
+      let!(:pedido_item) { create(:pedido_item, 
+        pedido: pedido, 
+        item: item, 
+        quantidade: 2, 
+        valor: 10.00
+      ) }
+
+      context 'with only pedido items' do
+        it 'calculates total with items + fees - discount' do
+          # Items: 2 * 10.00 = 20.00
+          # + Service fee: 5.00
+          # + App fee: 2.00  
+          # - Discount: 1.00
+          # = 26.00
+          expect(closed_conta.total).to eq(26.00)
+        end
+      end
+
+      context 'with pedido items and accompaniments' do
+        let!(:grupo_acompanhamento) { create(:grupo_acompanhamento, itemId: item.Id) }
+        let!(:item_acompanhamento) { create(:item_acompanhamento, 
+          grupoAcompanhamentoId: grupo_acompanhamento.Id,
+          valor: 3.00
+        ) }
+        let!(:pedido_item_acompanhamento) { create(:pedido_item_acompanhamento,
+          pedidoItemid: pedido_item.Id,
+          itemAcompanhamentoid: item_acompanhamento.Id,
+          quantidade: 1,
+          valor: 3.00
+        ) }
+
+        it 'calculates total with items + accompaniments + fees - discount' do
+          # Items: 2 * 10.00 = 20.00
+          # Accompaniments: 2 (pedido_item qty) * 1 * 3.00 = 6.00
+          # + Service fee: 5.00
+          # + App fee: 2.00
+          # - Discount: 1.00
+          # = 32.00
+          expect(closed_conta.total).to eq(32.00)
+        end
+      end
+
+      context 'with zero fee values' do
+        let!(:conta_with_zero_fees) { create(:conta, :closed, :with_zero_fees) }
+        let!(:pedido_zero_fees) { create(:pedido, :completed, conta: conta_with_zero_fees) }
+        let!(:pedido_item_zero_fees) { create(:pedido_item, 
+          pedido: pedido_zero_fees, 
+          item: item, 
+          quantidade: 1, 
+          valor: 15.00
+        ) }
+
+        it 'handles zero values correctly' do
+          # Items: 1 * 15.00 = 15.00
+          # + Service fee: 0.00
+          # + App fee: 0.00
+          # - Discount: 0.00
+          # = 15.00
+          expect(conta_with_zero_fees.total).to eq(15.00)
+        end
+      end
+    end
+
+    context 'when conta is not closed (statuscontaid != 4)' do
+      it 'returns 0' do
+        expect(subject.total).to eq(0)
+      end
+    end
+
+    context 'when pedidos are not completed (statuspedidoid != 4)' do
+      let!(:incomplete_pedido) { create(:pedido, conta: closed_conta) }  # Default is not completed
+      let!(:incomplete_pedido_item) { create(:pedido_item, 
+        pedido: incomplete_pedido, 
+        item: item, 
+        quantidade: 5, 
+        valor: 20.00
+      ) }
+
+      it 'excludes incomplete pedidos from calculation' do
+        # Only fees and discount (no pedido items counted)
+        # + Service fee: 5.00
+        # + App fee: 2.00
+        # - Discount: 1.00
+        # = 6.00
+        expect(closed_conta.total).to eq(6.00)
+      end
+    end
+
+    context 'when pedido items have invalid status' do
+      let!(:cancelled_status) { create(:status_pedido_item, :cancelled) }
+      let!(:invalid_pedido) { create(:pedido, :completed, conta: closed_conta) }
+      let!(:invalid_pedido_item) { create(:pedido_item, 
+        pedidoid: invalid_pedido.Id,
+        itemid: item.Id,
+        StatusPedidoItemId: cancelled_status.Id,
+        quantidade: 3, 
+        valor: 25.00
+      ) }
+
+      it 'excludes invalid pedido items from calculation' do
+        # Only fees and discount (no pedido items counted due to invalid status)
+        # + Service fee: 5.00
+        # + App fee: 2.00
+        # - Discount: 1.00
+        # = 6.00
+        expect(closed_conta.total).to eq(6.00)
+      end
     end
   end
 end

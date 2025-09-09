@@ -15,7 +15,8 @@
       "Bash(bin/rails:*)",
       "Bash(RAILS_ENV=test bin/rails db:version)",
       "Bash(bundle exec rspec:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

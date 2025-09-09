@@ -15,4 +15,37 @@ class Conta < ApplicationRecord
   validates :numero, presence: true
   validates :data, presence: true
   validates :identificadorConta, presence: true, uniqueness: true
+  
+  # Calculate total value based on pedidos, items, and fees
+  def total
+    return 0 unless statuscontaid == 4 # Only closed accounts
+    
+    # Get valid pedidos
+    valid_pedidos = pedidos.where(statuspedidoid: 4)
+    
+    # Sum of pedido items with valid status
+    items_total = valid_pedidos
+      .joins(:pedido_items)
+      .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
+      .sum('pedido_items.quantidade * pedido_items.valor')
+    
+    # Sum of pedido item accompaniments (handle case where no accompaniments exist)
+    accompaniments_total = 0
+    begin
+      accompaniments_total = valid_pedidos
+        .joins(pedido_items: :pedido_item_acompanhamentos)
+        .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
+        .sum('pedido_items.quantidade * PedidoItemAcompanhamento.quantidade * PedidoItemAcompanhamento.valor')
+    rescue ActiveRecord::StatementInvalid
+      # If there are no accompaniments or table doesn't exist, set to 0
+      accompaniments_total = 0
+    end
+    
+    # Calculate final total with fees and discount
+    items_total + 
+    accompaniments_total + 
+    (valorTaxaServico || 0) + 
+    (valorTaxaApp || 0) - 
+    (valorDesconto || 0)
+  end
 end
