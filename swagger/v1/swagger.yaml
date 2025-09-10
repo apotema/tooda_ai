@@ -1,0 +1,372 @@
+---
+openapi: 3.0.1
+info:
+  title: Todda AI API V1
+  version: v1
+  description: API documentation for the Todda AI beach management system
+  contact:
+    name: API Support
+    email: support@toddaai.com
+paths:
+  "/api/v1/barracas":
+    get:
+      summary: list barracas
+      tags:
+      - Barracas
+      description: Retrieve a paginated list of barracas with optional filtering and
+        searching
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page number for pagination
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: 'Number of items per page (default: 25)'
+        schema:
+          type: integer
+      - name: status_id
+        in: query
+        required: false
+        description: Filter by status barraca ID
+        schema:
+          type: integer
+      - name: praia_id
+        in: query
+        required: false
+        description: Filter by praia ID
+        schema:
+          type: integer
+      - name: q[Nome_cont]
+        in: query
+        required: false
+        description: Search barracas by name containing text
+        schema:
+          type: string
+      - name: q[Nome_start]
+        in: query
+        required: false
+        description: Search barracas by name starting with text
+        schema:
+          type: string
+      - name: q[s]
+        in: query
+        required: false
+        description: Sort criteria (e.g., "Nome asc", "Nome desc")
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+          headers:
+            X-Current-Page:
+              schema:
+                type: string
+              description: Current page number
+            X-Total-Pages:
+              schema:
+                type: string
+              description: Total number of pages
+            X-Total-Count:
+              schema:
+                type: string
+              description: Total number of barracas
+            X-Per-Page:
+              schema:
+                type: string
+              description: Number of items per page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Id:
+                      type: integer
+                    Nome:
+                      type: string
+                    Numero:
+                      type:
+                      - string
+                      - 'null'
+                    Licenca:
+                      type:
+                      - string
+                      - 'null'
+                    CpfCnpj:
+                      type:
+                      - string
+                      - 'null'
+                    ChavePix:
+                      type:
+                      - string
+                      - 'null'
+                    Latitude:
+                      type:
+                      - string
+                      - 'null'
+                    Longitude:
+                      type:
+                      - string
+                      - 'null'
+                    Ordem:
+                      type: integer
+                    PercentualComissao:
+                      type:
+                      - string
+                      - number
+                      - 'null'
+                    PercentualComissaoCartao:
+                      type:
+                      - string
+                      - number
+                      - 'null'
+                    RaioEntrega:
+                      type:
+                      - integer
+                      - 'null'
+                    TaxaEntrega:
+                      type:
+                      - string
+                      - number
+                      - 'null'
+                    TaxaServico:
+                      type:
+                      - string
+                      - number
+                      - 'null'
+                    UrlQrCode:
+                      type:
+                      - string
+                      - 'null'
+                    UrlQrCodeBackup:
+                      type:
+                      - string
+                      - 'null'
+                    DataInclusao:
+                      type:
+                      - string
+                      - 'null'
+                    PraiaId:
+                      type:
+                      - integer
+                      - 'null'
+                    StatusBarracaId:
+                      type: integer
+                    TipoAreaCoberturaId:
+                      type: integer
+                    TipoBarracaId:
+                      type: integer
+                    praia:
+                      type:
+                      - object
+                      - 'null'
+                      properties:
+                        Id:
+                          type: integer
+                        Nome:
+                          type: string
+                    status_barraca:
+                      type:
+                      - object
+                      - 'null'
+                      properties:
+                        Id:
+                          type: integer
+                        Status:
+                          type: string
+                    tipo_area_cobertura:
+                      type:
+                      - object
+                      - 'null'
+                      properties:
+                        Id:
+                          type: integer
+                        Tipo:
+                          type: string
+                    tipo_barraca:
+                      type:
+                      - object
+                      - 'null'
+                      properties:
+                        Id:
+                          type: integer
+                        Tipo:
+                          type: string
+                  required:
+                  - Id
+                  - Nome
+                  - Ordem
+                  - StatusBarracaId
+                  - TipoAreaCoberturaId
+                  - TipoBarracaId
+  "/api/v1/barracas/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Barraca ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: show barraca
+      tags:
+      - Barracas
+      description: Retrieve a specific barraca by ID
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Id:
+                    type: integer
+                  Nome:
+                    type: string
+                  Numero:
+                    type:
+                    - string
+                    - 'null'
+                  Licenca:
+                    type:
+                    - string
+                    - 'null'
+                  CpfCnpj:
+                    type:
+                    - string
+                    - 'null'
+                  ChavePix:
+                    type:
+                    - string
+                    - 'null'
+                  Latitude:
+                    type:
+                    - string
+                    - 'null'
+                  Longitude:
+                    type:
+                    - string
+                    - 'null'
+                  Ordem:
+                    type: integer
+                  PercentualComissao:
+                    type:
+                    - string
+                    - number
+                    - 'null'
+                  PercentualComissaoCartao:
+                    type:
+                    - string
+                    - number
+                    - 'null'
+                  RaioEntrega:
+                    type:
+                    - integer
+                    - 'null'
+                  TaxaEntrega:
+                    type:
+                    - string
+                    - number
+                    - 'null'
+                  TaxaServico:
+                    type:
+                    - string
+                    - number
+                    - 'null'
+                  UrlQrCode:
+                    type:
+                    - string
+                    - 'null'
+                  UrlQrCodeBackup:
+                    type:
+                    - string
+                    - 'null'
+                  DataInclusao:
+                    type:
+                    - string
+                    - 'null'
+                  PraiaId:
+                    type:
+                    - integer
+                    - 'null'
+                  StatusBarracaId:
+                    type: integer
+                  TipoAreaCoberturaId:
+                    type: integer
+                  TipoBarracaId:
+                    type: integer
+                  praia:
+                    type:
+                    - object
+                    - 'null'
+                    properties:
+                      Id:
+                        type: integer
+                      Nome:
+                        type: string
+                  status_barraca:
+                    type:
+                    - object
+                    - 'null'
+                    properties:
+                      Id:
+                        type: integer
+                      Status:
+                        type: string
+                  tipo_area_cobertura:
+                    type:
+                    - object
+                    - 'null'
+                    properties:
+                      Id:
+                        type: integer
+                      Tipo:
+                        type: string
+                  tipo_barraca:
+                    type:
+                    - object
+                    - 'null'
+                    properties:
+                      Id:
+                        type: integer
+                      Tipo:
+                        type: string
+                required:
+                - Id
+                - Nome
+                - Ordem
+                - StatusBarracaId
+                - TipoAreaCoberturaId
+                - TipoBarracaId
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+servers:
+- url: http://localhost:3000
+  description: Development server
+- url: https://api.toddaai.com
+  description: Production server
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      required:
+      - error

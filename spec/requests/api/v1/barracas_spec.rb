@@ -28,6 +28,26 @@ RSpec.describe 'Api::V1::Barracas', type: :request do
       end
     end
 
+    context 'with pagination' do
+      before do
+        # Create more barracas to test pagination
+        30.times { |i| create(:barraca, Nome: "Barraca #{i}") }
+        get '/api/v1/barracas', params: { page: 1, per_page: 10 }
+      end
+
+      it 'returns paginated results with valid schema' do
+        expect(response).to have_http_status(:ok).and match_json_schema('barracas')
+      end
+
+      it 'returns correct number of items per page' do
+        expect(response.parsed_body.size).to eq(10)
+      end
+
+      it 'includes pagination metadata in response headers' do
+        expect(response.headers).to include('X-Current-Page', 'X-Total-Pages', 'X-Total-Count')
+      end
+    end
+
     context 'with Ransack search' do
       it 'filters by name containing text' do
         get '/api/v1/barracas', params: { q: { Nome_cont: 'Sol' } }

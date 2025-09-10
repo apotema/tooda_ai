@@ -46,6 +46,9 @@ gem 'active_model_serializers', '~> 0.10.0'
 # Ransack for advanced searching and filtering
 gem 'ransack'
 
+# Kaminari for pagination
+gem 'kaminari'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
@@ -74,6 +77,9 @@ group :test do
 
   # JSON matchers for API testing
   gem 'json_matchers', '~> 0.11.1'
+
+  # RSwag for API documentation and testing
+  gem 'rswag'
 end
 
 group :development do
