@@ -65,6 +65,9 @@ group :development, :test do
   gem 'rubocop-rspec', '~> 3.7', require: false
 end
 
+# RSwag for API documentation and testing
+gem 'rswag'
+
 group :test do
   # RSpec for testing framework
   gem 'rspec-rails'
@@ -77,9 +80,6 @@ group :test do
 
   # JSON matchers for API testing
   gem 'json_matchers', '~> 0.11.1'
-
-  # RSwag for API documentation and testing
-  gem 'rswag'
 end
 
 group :development do
