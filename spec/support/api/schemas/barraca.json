@@ -1,0 +1,113 @@
+{
+  "type": "object",
+  "properties": {
+    "Id": {
+      "type": "integer"
+    },
+    "Nome": {
+      "type": "string"
+    },
+    "Numero": {
+      "type": ["string", "null"]
+    },
+    "Licenca": {
+      "type": ["string", "null"]
+    },
+    "CpfCnpj": {
+      "type": ["string", "null"]
+    },
+    "ChavePix": {
+      "type": ["string", "null"]
+    },
+    "Latitude": {
+      "type": ["string", "null"]
+    },
+    "Longitude": {
+      "type": ["string", "null"]
+    },
+    "Ordem": {
+      "type": "integer"
+    },
+    "PercentualComissao": {
+      "type": ["string", "number", "null"]
+    },
+    "PercentualComissaoCartao": {
+      "type": ["string", "number", "null"]
+    },
+    "RaioEntrega": {
+      "type": ["integer", "null"]
+    },
+    "TaxaEntrega": {
+      "type": ["string", "number", "null"]
+    },
+    "TaxaServico": {
+      "type": ["string", "number", "null"]
+    },
+    "UrlQrCode": {
+      "type": ["string", "null"]
+    },
+    "UrlQrCodeBackup": {
+      "type": ["string", "null"]
+    },
+    "DataInclusao": {
+      "type": ["string", "null"]
+    },
+    "PraiaId": {
+      "type": ["integer", "null"]
+    },
+    "StatusBarracaId": {
+      "type": "integer"
+    },
+    "TipoAreaCoberturaId": {
+      "type": "integer"
+    },
+    "TipoBarracaId": {
+      "type": "integer"
+    },
+    "praia": {
+      "type": ["object", "null"],
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Nome": {
+          "type": "string"
+        }
+      }
+    },
+    "status_barraca": {
+      "type": ["object", "null"],
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Status": {
+          "type": "string"
+        }
+      }
+    },
+    "tipo_area_cobertura": {
+      "type": ["object", "null"],
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Tipo": {
+          "type": "string"
+        }
+      }
+    },
+    "tipo_barraca": {
+      "type": ["object", "null"],
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Tipo": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": ["Id", "Nome", "Ordem", "StatusBarracaId", "TipoAreaCoberturaId", "TipoBarracaId"]
+}

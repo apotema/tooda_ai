@@ -42,7 +42,6 @@ gem 'thruster', require: false
 
 # JSON API serialization
 gem 'active_model_serializers', '~> 0.10.0'
-gem 'jsonapi-serializer', '~> 2.2'
 
 # Ransack for advanced searching and filtering
 gem 'ransack'
@@ -72,6 +71,9 @@ group :test do
 
   # Factory Bot for test data generation
   gem 'factory_bot_rails'
+
+  # JSON matchers for API testing
+  gem 'json_matchers', '~> 0.11.1'
 end
 
 group :development do

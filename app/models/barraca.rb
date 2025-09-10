@@ -38,6 +38,7 @@ class Barraca < ApplicationRecord
   belongs_to :status_barraca, class_name: 'StatusBarraca', foreign_key: 'StatusBarracaId', inverse_of: false
   belongs_to :tipo_area_cobertura, class_name: 'TipoAreaCobertura', foreign_key: 'TipoAreaCoberturaId',
                                    inverse_of: false
+  belongs_to :tipo_barraca, class_name: 'TipoBarraca', foreign_key: 'TipoBarracaId', inverse_of: false
 
   has_many :contas, class_name: 'Conta', foreign_key: 'barracaid', dependent: :destroy, inverse_of: :barraca
   has_many :items, class_name: 'Item', foreign_key: 'barracaid', dependent: :destroy, inverse_of: :barraca
@@ -54,4 +55,21 @@ class Barraca < ApplicationRecord
 
   # Scopes
   scope :by_praia, ->(praia_id) { where(PraiaId: praia_id) }
+
+  # Ransack configuration
+  # Define searchable attributes
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[
+      Id Nome Numero Licenca CpfCnpj ChavePix
+      Latitude Longitude Ordem PercentualComissao
+      PercentualComissaoCartao PraiaId StatusBarracaId
+      TipoAreaCoberturaId TipoBarracaId RaioEntrega
+      TaxaEntrega TaxaServico DataInclusao
+    ]
+  end
+
+  # Define searchable associations
+  def self.ransackable_associations(_auth_object = nil)
+    %w[praia status_barraca tipo_area_cobertura tipo_barraca contas items usuarios]
+  end
 end
