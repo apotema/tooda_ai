@@ -1,3 +1,30 @@
+# == Schema Information
+#
+# Table name: Produto
+#
+#  BarracaId     :integer
+#  Excluido      :boolean          not null
+#  Id            :integer          not null, primary key
+#  Ordem         :integer          not null
+#  QtdItens      :integer          default(1), not null
+#  ativo         :boolean          not null
+#  cest          :string(20)
+#  cfop          :string(20)
+#  cofins        :string(20)
+#  csosn         :string(20)
+#  detalhe       :string(300)
+#  icms          :string(20)
+#  ipi           :string(20)
+#  ncm           :string(20)
+#  nome          :string(50)       not null
+#  origemIcms    :string(20)
+#  pis           :string(20)
+#  tipoProdutoid :integer          not null
+#
+# Foreign Keys
+#
+#  FK_Item_TipoProduto  (tipoProdutoid => TipoProduto.Id)
+#
 require 'rails_helper'
 
 RSpec.describe Produto, type: :model do

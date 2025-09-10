@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: FormaPagamento
+#
+#  Codigo :string(20)       not null
+#  Id     :integer          not null, primary key
+#  Tipo   :string(50)       not null
+#  ativo  :boolean          not null
+#
 class FormaPagamento < ApplicationRecord
   self.table_name = 'FormaPagamento'
 

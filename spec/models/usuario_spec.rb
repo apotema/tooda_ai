@@ -1,3 +1,32 @@
+# == Schema Information
+#
+# Table name: Usuario
+#
+#  DataInclusao          :datetime         not null
+#  DataNascimento        :datetime
+#  Id                    :integer          not null, primary key
+#  IdentificadorExterno  :string(50)
+#  StatusUsuarioId       :integer          not null
+#  TermoDeUsoAceito      :boolean          not null
+#  TrocaSenha            :boolean          default(FALSE), not null
+#  codTelefonePrimario   :string(2)
+#  codTelefoneSecundario :string(2)
+#  cpf                   :string(15)
+#  email                 :string(100)
+#  identidade            :string(15)
+#  nome                  :string(100)
+#  password              :string(50)
+#  telefonePrimario      :string(20)
+#  telefoneSecundario    :string(20)
+#  tipoacessoid          :integer          not null
+#  tipousuarioid         :integer          not null
+#
+# Foreign Keys
+#
+#  FK_Users_StatusUsuario  (StatusUsuarioId => StatusUsuario.Id)
+#  FK_Users_TipoAcesso     (tipoacessoid => TipoAcesso.Id)
+#  FK_Users_TipoUsuario    (tipousuarioid => TipoUsuario.Id)
+#
 require 'rails_helper'
 
 RSpec.describe Usuario, type: :model do

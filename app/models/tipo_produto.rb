@@ -1,3 +1,10 @@
+# == Schema Information
+#
+# Table name: TipoProduto
+#
+#  Id   :integer          not null, primary key
+#  Tipo :string(20)       not null
+#
 class TipoProduto < ApplicationRecord
   self.table_name = 'TipoProduto'
 

@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: PedidoItemAcompanhamento
+#
+#  Id                   :bigint           not null, primary key
+#  NomeAcompanhamento   :string(50)
+#  itemAcompanhamentoid :integer          not null
+#  observacao           :string(200)
+#  pedidoItemid         :bigint           not null
+#  quantidade           :integer          not null
+#  valor                :decimal(10, 2)   not null
+#
+# Foreign Keys
+#
+#  FK_PedidoItemAcompanhamento_Item        (itemAcompanhamentoid => ItemAcompanhamento.Id)
+#  FK_PedidoItemAcompanhamento_PedidoItem  (pedidoItemid => PedidoItem.Id)
+#
 class PedidoItemAcompanhamento < ApplicationRecord
   self.table_name = 'PedidoItemAcompanhamento'
 

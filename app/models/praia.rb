@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: Praia
+#
+#  Cidade :string(20)       not null
+#  Id     :integer          not null, primary key
+#  Nome   :string(70)       not null
+#  Uf     :string(3)        not null
+#
 class Praia < ApplicationRecord
   self.table_name = 'Praia'
 

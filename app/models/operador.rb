@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: Operador
+#
+#  BarracaId             :integer          not null
+#  DataInclusao          :datetime         not null
+#  Id                    :integer          not null, primary key
+#  IdentificadorOperador :string(50)       not null
+#  StatusOperadorId      :integer          not null
+#  TipoOperadorId        :integer          not null
+#  UsuarioId             :integer
+#  email                 :string(100)
+#  nome                  :string(100)      not null
+#
+# Foreign Keys
+#
+#  FK_Operador_Barraca          (BarracaId => Barraca.Id)
+#  FK_Operador_StatusOperador   (StatusOperadorId => StatusOperador.Id)
+#  FK_Operador_TipoOperador     (TipoOperadorId => TipoOperador.Id)
+#  FK_Operador_UsuarioOperador  (UsuarioId => Operador.Id)
+#
 class Operador < ApplicationRecord
   self.table_name = 'Operador'
 

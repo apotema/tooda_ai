@@ -1,3 +1,43 @@
+# == Schema Information
+#
+# Table name: Conta
+#
+#  CartaoCreditoId    :bigint
+#  Id                 :bigint           not null, primary key
+#  UrlNotaFiscal      :string(2000)
+#  barracaid          :integer          not null
+#  contaPendurada     :boolean          default(FALSE), not null
+#  data               :datetime         not null
+#  dataFechamento     :datetime
+#  formapagamentoid   :integer
+#  identificadorConta :string(50)
+#  latitude           :decimal(10, 7)
+#  longitude          :decimal(10, 7)
+#  numero             :bigint           not null
+#  numeroMesa         :varchar(200)
+#  operadorId         :integer
+#  removeTaxaServico  :boolean          default(FALSE), not null
+#  statuscontaid      :integer          not null
+#  usuarioid          :integer
+#  valorDesconto      :decimal(18, 2)   not null
+#  valorTaxaApp       :decimal(18, 2)   not null
+#  valorTaxaServico   :decimal(18, 2)   not null
+#
+# Indexes
+#
+#  IDX_BARRACAID                                 (barracaid)
+#  IDX_STATUS_BARRACAID                          (barracaid,statuscontaid)
+#  IX_Conta_IdentificadorConta_Status_BarracaId  (identificadorConta,barracaid,statuscontaid)
+#
+# Foreign Keys
+#
+#  FK_Conta_Barraca         (barracaid => Barraca.Id)
+#  FK_Conta_CartaoCredito   (CartaoCreditoId => CartaoCredito.Id)
+#  FK_Conta_FormaPagamento  (formapagamentoid => FormaPagamento.Id)
+#  FK_Conta_Operador        (operadorId => Operador.Id)
+#  FK_Conta_Status          (statuscontaid => StatusConta.Id)
+#  FK_Conta_Usuario         (usuarioid => Usuario.Id)
+#
 require 'rails_helper'
 
 RSpec.describe Conta, type: :model do
@@ -74,36 +114,19 @@ RSpec.describe Conta, type: :model do
       end
 
       it 'creates accompaniment data correctly' do
-        grupo_acompanhamento = create(:grupo_acompanhamento, itemId: item.Id)
-        item_acompanhamento = create(:item_acompanhamento,
-                                     grupoAcompanhamentoId: grupo_acompanhamento.Id,
-                                     valor: 3.00)
-        pedido_item_acompanhamento = create(:pedido_item_acompanhamento,
-                                            pedidoItemid: pedido_item.Id,
-                                            itemAcompanhamentoid: item_acompanhamento.Id,
-                                            quantidade: 1,
-                                            valor: 3.00)
-
-        expect(pedido_item_acompanhamento).to be_persisted
+        grupo = create(:grupo_acompanhamento, itemId: item.Id)
+        item_ac = create(:item_acompanhamento, grupoAcompanhamentoId: grupo.Id, valor: 3.00)
+        pedido_item_ac = create(:pedido_item_acompanhamento,
+                                pedidoItemid: pedido_item.Id, itemAcompanhamentoid: item_ac.Id)
+        expect(pedido_item_ac).to be_persisted
       end
 
       it 'calculates total including accompaniment values' do
-        grupo_acompanhamento = create(:grupo_acompanhamento, itemId: item.Id)
-        item_acompanhamento = create(:item_acompanhamento,
-                                     grupoAcompanhamentoId: grupo_acompanhamento.Id,
-                                     valor: 3.00)
-        create(:pedido_item_acompanhamento,
-               pedidoItemid: pedido_item.Id,
-               itemAcompanhamentoid: item_acompanhamento.Id,
-               quantidade: 1,
-               valor: 3.00)
-
-        # Items: 2 * 10.00 = 20.00
-        # Accompaniments: 2 (pedido_item qty) * 1 * 3.00 = 6.00
-        # + Service fee: 5.00
-        # + App fee: 2.00
-        # - Discount: 1.00
-        # = 32.00
+        grupo = create(:grupo_acompanhamento, itemId: item.Id)
+        item_ac = create(:item_acompanhamento, grupoAcompanhamentoId: grupo.Id, valor: 3.00)
+        create(:pedido_item_acompanhamento, pedidoItemid: pedido_item.Id,
+                                            itemAcompanhamentoid: item_ac.Id, quantidade: 1, valor: 3.00)
+        # Total: 20 (items) + 6 (accomp) + 5 (service) + 2 (app) - 1 (discount) = 32
         expect(closed_conta.total).to eq(32.00)
       end
     end

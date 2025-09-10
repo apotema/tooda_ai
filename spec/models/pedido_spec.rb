@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: Pedido
+#
+#  Id             :bigint           not null, primary key
+#  TaxaEntrega    :decimal(18, 2)
+#  contaid        :bigint           not null
+#  data           :datetime         not null
+#  impresso       :boolean          not null
+#  observacao     :string(200)
+#  operadorId     :integer
+#  statuspedidoid :integer          not null
+#  tipoEntregaId  :integer
+#  valorDesconto  :decimal(18, 2)
+#
+# Foreign Keys
+#
+#  FK_Pedido_Conta        (contaid => Conta.Id)
+#  FK_Pedido_Operador     (operadorId => Operador.Id)
+#  FK_Pedido_Status       (statuspedidoid => StatusPedido.Id)
+#  FK_Pedido_TipoEntrega  (tipoEntregaId => TipoEntrega.Id)
+#
 require 'rails_helper'
 
 RSpec.describe Pedido, type: :model do

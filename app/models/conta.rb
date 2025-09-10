@@ -1,3 +1,43 @@
+# == Schema Information
+#
+# Table name: Conta
+#
+#  CartaoCreditoId    :bigint
+#  Id                 :bigint           not null, primary key
+#  UrlNotaFiscal      :string(2000)
+#  barracaid          :integer          not null
+#  contaPendurada     :boolean          default(FALSE), not null
+#  data               :datetime         not null
+#  dataFechamento     :datetime
+#  formapagamentoid   :integer
+#  identificadorConta :string(50)
+#  latitude           :decimal(10, 7)
+#  longitude          :decimal(10, 7)
+#  numero             :bigint           not null
+#  numeroMesa         :varchar(200)
+#  operadorId         :integer
+#  removeTaxaServico  :boolean          default(FALSE), not null
+#  statuscontaid      :integer          not null
+#  usuarioid          :integer
+#  valorDesconto      :decimal(18, 2)   not null
+#  valorTaxaApp       :decimal(18, 2)   not null
+#  valorTaxaServico   :decimal(18, 2)   not null
+#
+# Indexes
+#
+#  IDX_BARRACAID                                 (barracaid)
+#  IDX_STATUS_BARRACAID                          (barracaid,statuscontaid)
+#  IX_Conta_IdentificadorConta_Status_BarracaId  (identificadorConta,barracaid,statuscontaid)
+#
+# Foreign Keys
+#
+#  FK_Conta_Barraca         (barracaid => Barraca.Id)
+#  FK_Conta_CartaoCredito   (CartaoCreditoId => CartaoCredito.Id)
+#  FK_Conta_FormaPagamento  (formapagamentoid => FormaPagamento.Id)
+#  FK_Conta_Operador        (operadorId => Operador.Id)
+#  FK_Conta_Status          (statuscontaid => StatusConta.Id)
+#  FK_Conta_Usuario         (usuarioid => Usuario.Id)
+#
 class Conta < ApplicationRecord
   self.table_name = 'Conta'
 
@@ -21,33 +61,33 @@ class Conta < ApplicationRecord
   def total
     return 0 unless statuscontaid == 4 # Only closed accounts
 
-    # Get valid pedidos
-    valid_pedidos = pedidos.where(statuspedidoid: 4)
+    calculate_items_total + calculate_accompaniments_total + calculate_fees
+  end
 
-    # Sum of pedido items with valid status
-    items_total = valid_pedidos
-                  .joins(:pedido_items)
-                  .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
-                  .sum('pedido_items.quantidade * pedido_items.valor')
+  private
 
-    # Sum of pedido item accompaniments (handle case where no accompaniments exist)
-    accompaniments_total = 0
-    begin
-      accompaniments_total = valid_pedidos
-                             .joins(pedido_items: :pedido_item_acompanhamentos)
-                             .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
-                             .sum('pedido_items.quantidade * PedidoItemAcompanhamento.quantidade * ' \
-                                  'PedidoItemAcompanhamento.valor')
-    rescue ActiveRecord::StatementInvalid
-      # If there are no accompaniments or table doesn't exist, set to 0
-      accompaniments_total = 0
-    end
+  def calculate_items_total
+    valid_pedidos
+      .joins(:pedido_items)
+      .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
+      .sum('pedido_items.quantidade * pedido_items.valor')
+  end
 
-    # Calculate final total with fees and discount
-    items_total +
-      accompaniments_total +
-      (valorTaxaServico || 0) +
-      (valorTaxaApp || 0) -
-      (valorDesconto || 0)
+  def calculate_accompaniments_total
+    valid_pedidos
+      .joins(pedido_items: :pedido_item_acompanhamentos)
+      .where(pedido_items: { StatusPedidoItemId: [1, 2, 4] })
+      .sum('pedido_items.quantidade * PedidoItemAcompanhamento.quantidade * ' \
+           'PedidoItemAcompanhamento.valor')
+  rescue ActiveRecord::StatementInvalid
+    0
+  end
+
+  def calculate_fees
+    (valorTaxaServico || 0) + (valorTaxaApp || 0) - (valorDesconto || 0)
+  end
+
+  def valid_pedidos
+    pedidos.where(statuspedidoid: 4)
   end
 end

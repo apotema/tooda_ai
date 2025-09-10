@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: CartaoCredito
+#
+#  BandeiraId     :integer          not null
+#  DataCriacao    :datetime         not null
+#  DataValidade   :datetime         not null
+#  Id             :bigint           not null, primary key
+#  Nome           :string(150)      not null
+#  Numero         :string(30)       not null
+#  Principal      :boolean          not null
+#  StatusCartaoId :integer          not null
+#
+# Foreign Keys
+#
+#  FK_Cartao_Bandeira  (BandeiraId => Bandeira.Id)
+#  FK_Cartao_Status    (StatusCartaoId => StatusCartao.Id)
+#
 class CartaoCredito < ApplicationRecord
   self.table_name = 'CartaoCredito'
 

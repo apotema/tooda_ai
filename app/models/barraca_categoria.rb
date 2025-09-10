@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: BarracaCategoria
+#
+#  Ativa     :boolean          not null
+#  BarracaId :integer          not null
+#  Excluida  :boolean          not null
+#  Id        :integer          not null, primary key
+#  Nome      :string(60)       not null
+#  Ordem     :integer          not null
+#
+# Foreign Keys
+#
+#  FK_BarracaCategoria_Barraca  (BarracaId => Barraca.Id)
+#
 class BarracaCategoria < ApplicationRecord
   self.table_name = 'BarracaCategoria'
 

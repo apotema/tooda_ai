@@ -1,3 +1,10 @@
+# == Schema Information
+#
+# Table name: StatusUsuario
+#
+#  Id     :integer          not null, primary key
+#  Status :string(50)       not null
+#
 class StatusUsuario < ApplicationRecord
   self.table_name = 'StatusUsuario'
 

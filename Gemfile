@@ -41,6 +41,7 @@ gem 'thruster', require: false
 # gem "rack-cors"
 
 # JSON API serialization
+gem 'active_model_serializers', '~> 0.10.0'
 gem 'jsonapi-serializer', '~> 2.2'
 
 # Ransack for advanced searching and filtering
@@ -75,5 +76,5 @@ end
 
 group :development do
   # Annotate models and routes
-  gem 'annotate'
+  gem 'annotaterb'
 end
