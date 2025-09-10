@@ -40,5 +40,6 @@ production:
   password: <%= ENV.fetch("DATABASE_PASSWORD", "=oY3P12P~-yp&i") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: <%= ENV.fetch("DATABASE_TIMEOUT") { 5000 } %>
+  azure: true
 
 # Previous SQL Server configuration moved above and applied to development/test
