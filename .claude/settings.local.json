@@ -26,7 +26,8 @@
       "Bash(gem search:*)",
       "WebSearch",
       "Bash(RAILS_ENV=test bundle exec rspec spec/acceptance/ --format Rswag::Specs::SwaggerFormatter --order defined --dry-run)",
-      "Bash(RAILS_ENV=test bundle exec rspec spec/acceptance/ --format Rswag::Specs::SwaggerFormatter --order defined)"
+      "Bash(RAILS_ENV=test bundle exec rspec spec/acceptance/ --format Rswag::Specs::SwaggerFormatter --order defined)",
+      "Bash(RAILS_ENV=production bundle exec rails db:prepare)"
     ],
     "deny": [],
     "ask": []
