@@ -7,7 +7,9 @@ Rails.application.configure do
   config.enable_reloading = true
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load = !!!ENV['DISABLE_EAGER_LOAD']
+  config.secret_key_base = "a"
+
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -41,8 +43,8 @@ Rails.application.configure do
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
-  # Raise an error on page load if there are pending migrations.
-  config.active_record.migration_error = :page_load
+  # Disable migration check on page load (DB is read-only/shared with production)
+  config.active_record.migration_error = false
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true

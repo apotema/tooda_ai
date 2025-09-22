@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+			{
+				"label": "bundle-install-fast-mcp",
+				"type": "shell",
+				"command": "bundle install",
+				"group": "build"
+			},
+		{
+			"label": "rails-server-start",
+			"type": "shell",
+			"command": "bin/rails server -p 3000",
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "restart-rails",
+			"type": "shell",
+			"command": "pkill -f puma || true; bin/rails s -p 3000",
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}

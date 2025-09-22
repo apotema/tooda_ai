@@ -58,3 +58,23 @@ Default SQL Server credentials:
 ## Configuration
 
 The application supports both SQLite (default) and SQL Server databases. To switch to SQL Server, update the environment configuration in `config/database.yml` and set the required environment variables.
+
+## MCP server (fast-mcp)
+
+This app exposes an MCP server for AI clients (Claude, ChatGPT via MCP) using the fast-mcp gem.
+
+- Endpoints mounted under `/mcp`:
+   - `/mcp/messages` (HTTP messages)
+   - `/mcp/sse` (Server-Sent Events)
+
+Registered tools/resources:
+- Tool: `BarracasIndexTool` — lists barracas with Ransack filters and pagination. Arguments:
+   - `q` (hash): Ransack params, e.g. `{ "Nome_cont" => "Bar", "s" => "Nome asc" }`
+   - `praia_id`, `status_id` (strings): legacy filters
+   - `page`, `per_page` (integers): pagination
+- Resource: `help:///barracas/ransack` — JSON guide with examples, searchable attributes and associations.
+
+Quick test with MCP Inspector:
+1) Start Rails server.
+2) Run MCP Inspector (SSE) and point it to `http://localhost:3000/mcp/sse`.
+3) Discover tools, call `BarracasIndexTool` with `{ q: { "Nome_cont": "Bar", "s": "Nome asc" }, page: 1, per_page: 10 }`.

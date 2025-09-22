@@ -76,7 +76,7 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Configure secret_key_base from environment variable
-  config.secret_key_base = ENV["SECRET_KEY_BASE"]
+  config.secret_key_base = "a"
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [

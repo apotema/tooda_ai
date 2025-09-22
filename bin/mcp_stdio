@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../config/environment'
+require 'fast_mcp'
+
+app_name = Rails.application.class.module_parent_name.underscore.dasherize
+server = FastMcp::Server.new(name: app_name, version: '1.0.0')
+
+# Discover and register all tools/resources
+server.register_tools(*ApplicationTool.descendants)
+server.register_resources(*ApplicationResource.descendants)
+
+# Start over STDIO transport
+server.start

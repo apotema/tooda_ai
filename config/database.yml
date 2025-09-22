@@ -18,8 +18,15 @@ sqlserver_default: &sqlserver
   timeout: 5000
 
 development:
-  <<: *sqlserver
-  database: todapraia
+  adapter: <%= ENV.fetch("DATABASE_ADAPTER", "sqlserver") %>
+  host: <%= ENV.fetch("DATABASE_HOST", "common-rep-tooda-prod-brz-bdsql.database.windows.net") %>
+  port: <%= ENV.fetch("DATABASE_PORT", "1433") %>
+  database: <%= ENV.fetch("DATABASE_NAME", "todapraia") %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", "sa-tooda") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "=oY3P12P~-yp&i") %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: <%= ENV.fetch("DATABASE_TIMEOUT") { 5000 } %>
+  azure: true
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
