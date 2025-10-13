@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :barracas, only: %i[index show]
+      resources :praias, only: %i[index show]
     end
   end
 
