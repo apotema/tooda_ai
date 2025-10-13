@@ -18,11 +18,13 @@ gem 'puma', '>= 5.0'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[windows jruby]
 
-
 gem 'faker', '~> 3.5.2'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
+
+# Load environment variables from .env file
+gem 'dotenv-rails', groups: %i[development test production]
 
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem 'kamal', require: false
