@@ -1,0 +1,44 @@
+module Api
+  module V1
+    class BarracasOpenapiController < ApplicationController
+      include OpenapiRansackMapper
+
+      before_action :set_barraca, only: [:show]
+
+      def index
+        ransack_params = build_ransack_params(BARRACA_PARAM_MAP, BARRACA_SORT_MAP)
+
+        @q = Barraca.ransack(ransack_params)
+        @barracas = @q.result
+                      .includes(:praia, :status_barraca, :tipo_area_cobertura, :tipo_barraca)
+                      .page(params[:page])
+                      .per(params[:per_page] || 25)
+
+        add_pagination_headers
+        render json: @barracas, each_serializer: BarracaSerializer
+      end
+
+      # GET /api/v1/barracas_openapi/:id
+      def show
+        render json: @barraca, serializer: BarracaSerializer
+      end
+
+      private
+
+      def set_barraca
+        @barraca = Barraca.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Barraca not found' }, status: :not_found
+      end
+
+      def add_pagination_headers
+        response.headers['X-Current-Page'] = @barracas.current_page.to_s
+        response.headers['X-Next-Page'] = @barracas.next_page.to_s if @barracas.next_page
+        response.headers['X-Prev-Page'] = @barracas.prev_page.to_s if @barracas.prev_page
+        response.headers['X-Total-Pages'] = @barracas.total_pages.to_s
+        response.headers['X-Total-Count'] = @barracas.total_count.to_s
+        response.headers['X-Per-Page'] = @barracas.limit_value.to_s
+      end
+    end
+  end
+end
