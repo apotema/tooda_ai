@@ -1,0 +1,32 @@
+# LLM Translation Configuration
+# Maps English LLM-friendly values to database IDs and vice versa
+
+barracas:
+  status:
+    model: StatusBarraca
+    attribute: Status
+    mappings:
+      open: Aberta
+      closed: Fechada
+      paused: Pausada
+      inactive: Inativa
+  
+  type:
+    model: TipoBarraca
+    attribute: Nome
+    mappings:
+      kiosk: Quiosque
+      fixed_tent: Barraca Fixa
+      mobile: Ambulante
+  
+  coverage_type:
+    model: TipoAreaCobertura
+    attribute: Nome
+    mappings:
+      full: Cobertura Total
+      partial: Cobertura Parcial
+      none: Sem Cobertura
+
+praias: {}
+  # Praias don't have enum-like fields that need translation
+  # but we keep the structure for consistency
