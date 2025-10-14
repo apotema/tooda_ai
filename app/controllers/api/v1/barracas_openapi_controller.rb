@@ -14,7 +14,7 @@ module Api
                       .page(params[:page])
                       .per(params[:per_page] || 25)
 
-        render json: { barracas: @barracas }, serializer: BarracasOpenapiCollectionSerializer
+        render json: BarracasOpenapiCollectionSerializer.new({ barracas: @barracas }).serializable_hash
       end
 
       # GET /api/v1/barracas_openapi/:id

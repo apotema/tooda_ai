@@ -13,7 +13,7 @@ module Api
                     .page(params[:page])
                     .per(params[:per_page] || 25)
 
-        render json: { praias: @praias }, serializer: PraiasOpenapiCollectionSerializer
+        render json: PraiasOpenapiCollectionSerializer.new({ praias: @praias }).serializable_hash
       end
 
       # GET /api/v1/praias_openapi/:id

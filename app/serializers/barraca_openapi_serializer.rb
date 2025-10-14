@@ -39,6 +39,6 @@ class BarracaOpenapiSerializer < ActiveModel::Serializer
 
   # Translated status using generic translator
   def status
-    translation(:barracas, :status).output(StatusBarracaId) || 'unknown'
+    translation(:barracas, :status).output(object.StatusBarracaId) || 'unknown'
   end
 end

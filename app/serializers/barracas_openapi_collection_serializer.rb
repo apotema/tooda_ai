@@ -39,14 +39,14 @@ class BarracasOpenapiCollectionSerializer < ActiveModel::Serializer
     included_data[:tipo_barracas] = tipo_barracas.map do |type|
       {
         id: type.Id,
-        name: type.Nome
+        name: type.Tipo
       }
     end
 
     included_data[:tipo_area_coberturas] = tipo_area_coberturas.map do |coverage|
       {
         id: coverage.Id,
-        name: coverage.Nome
+        name: coverage.Tipo
       }
     end
 
