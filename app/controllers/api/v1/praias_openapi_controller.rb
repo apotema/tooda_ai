@@ -13,15 +13,12 @@ module Api
                     .page(params[:page])
                     .per(params[:per_page] || 25)
 
-        render json: {
-          praias: ActiveModelSerializers::SerializableResource.new(@praias, each_serializer: PraiaSerializer),
-          pagination: PaginationSerializer.new(@praias)
-        }
+        render json: { praias: @praias }, serializer: PraiasOpenapiCollectionSerializer
       end
 
       # GET /api/v1/praias_openapi/:id
       def show
-        render json: @praia, serializer: PraiaSerializer
+        render json: @praia, serializer: PraiaOpenapiSerializer
       end
 
       private

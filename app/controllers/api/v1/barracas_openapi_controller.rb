@@ -14,15 +14,12 @@ module Api
                       .page(params[:page])
                       .per(params[:per_page] || 25)
 
-        render json: {
-          barracas: ActiveModelSerializers::SerializableResource.new(@barracas, each_serializer: BarracaSerializer),
-          pagination: PaginationSerializer.new(@barracas)
-        }
+        render json: { barracas: @barracas }, serializer: BarracasOpenapiCollectionSerializer
       end
 
       # GET /api/v1/barracas_openapi/:id
       def show
-        render json: @barraca, serializer: BarracaSerializer
+        render json: @barraca, serializer: BarracaOpenapiSerializer
       end
 
       private

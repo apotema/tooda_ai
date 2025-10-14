@@ -1,5 +1,6 @@
 module OpenapiRansackMapper
   extend ActiveSupport::Concern
+  include LlmTranslator
 
   # Map clean English param names to Ransack predicates
   # Format: { english_param: { attribute: 'ModelAttribute', predicate: 'ransack_predicate' } }
@@ -16,6 +17,11 @@ module OpenapiRansackMapper
     'id' => { attribute: 'Id', predicate: 'eq' },
     'beach_id' => { attribute: 'PraiaId', predicate: 'eq' },
     'status_id' => { attribute: 'StatusBarracaId', predicate: 'eq' },
+    'status' => {
+      attribute: 'StatusBarracaId',
+      predicate: 'eq',
+      translate: { resource: :barracas, field: :status }
+    },
     'type_id' => { attribute: 'TipoBarracaId', predicate: 'eq' },
     'coverage_type_id' => { attribute: 'TipoAreaCoberturaId', predicate: 'eq' },
 
@@ -65,6 +71,15 @@ module OpenapiRansackMapper
     param_map.each do |english_param, config|
       value = params[english_param]
       next if value.blank?
+
+      # Translate value if needed using generic translator
+      # e.g., status: "open" → 4
+      if config[:translate]
+        resource = config[:translate][:resource]
+        field = config[:translate][:field]
+        value = LlmTranslator.translation(resource, field).input(value)
+        next if value.nil? # Skip if translation failed
+      end
 
       ransack_key = "#{config[:attribute]}_#{config[:predicate]}"
       ransack_params[ransack_key] = value
