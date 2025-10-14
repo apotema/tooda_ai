@@ -1,0 +1,1431 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Tooda Beach Tents API",
+    "version": "2.0.0",
+    "description": "Beach tents and beaches API. Response format: {data: [], included: {}, pagination: {}}. Search by name, status, location. Supports pagination and sorting.",
+    "contact": {
+      "email": "api@mocatecnologia.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://toodaai.mocatecnologia.com",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/v1/barracas_openapi": {
+      "get": {
+        "operationId": "tents",
+        "summary": "Search beach tents",
+        "description": "Returns tents with included resources. Response: {barracas: [], included: {praias, status_barracas, tipo_barracas, tipo_area_coberturas}, pagination: {}}.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by tent name (contains, case-insensitive)",
+            "example": "Bar"
+          },
+          {
+            "in": "query",
+            "name": "number",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by license number (contains)",
+            "example": "123"
+          },
+          {
+            "in": "query",
+            "name": "license",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by license identifier (contains)",
+            "example": "LIC"
+          },
+          {
+            "in": "query",
+            "name": "beach_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by beach ID (exact match)",
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "status_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by status ID (exact match)",
+            "example": 4
+          },
+          {
+            "in": "query",
+            "name": "type_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by tent type ID (exact match)",
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "cpf_cnpj",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by owner's CPF/CNPJ (contains)",
+            "example": "12345678"
+          },
+          {
+            "in": "query",
+            "name": "created_after",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter by creation date >= value (ISO 8601)",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          {
+            "in": "query",
+            "name": "created_before",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter by creation date <= value (ISO 8601)",
+            "example": "2023-12-31T23:59:59Z"
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "number", "created_at", "commission"]
+            },
+            "description": "Field to sort by",
+            "example": "name"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": ["open", "closed", "paused", "inactive"]
+            },
+            "description": "Filter by status",
+            "example": "open"
+          },
+          {
+            "in": "query",
+            "name": "sort_direction",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            },
+            "description": "Sort direction (ascending or descending)",
+            "example": "asc"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 25
+            },
+            "description": "Items per page",
+            "example": 25
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of beach tents returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "barracas": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BarracaOpenapi"
+                      }
+                    },
+                    "included": {
+                      "$ref": "#/components/schemas/IncludedResources"
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                },
+                "examples": {
+                "success": {
+                  "summary": "Multiple tents found",
+                  "value": {
+                    "barracas": [
+                    {
+                      "id": 1,
+                      "name": "Barraca Bar & Mar",
+                      "number": "112",
+                      "license": "[LICENCA112Ipanema]",
+                      "status": "open",
+                      "beach_id": 1,
+                      "type_id": 1,
+                      "coverage_type_id": 1,
+                      "tax_id": "05477232706",
+                      "latitude": "-22.986907958984375",
+                      "longitude": "-43.20489501953125"
+                    }
+                  ],
+                    "included": {
+                      "praias": [
+                        {
+                          "id": 1,
+                          "name": "Ipanema",
+                          "city": "Rio de Janeiro",
+                          "state": "RJ"
+                        }
+                      ],
+                      "status_barracas": [
+                        {
+                          "id": 4,
+                          "status": "Aberta",
+                          "status_en": "open"
+                        }
+                      ],
+                      "tipo_barracas": [
+                        {
+                          "id": 1,
+                          "name": "Quiosque"
+                        }
+                      ],
+                      "tipo_area_coberturas": [
+                        {
+                          "id": 1,
+                          "name": "Cobertura Total"
+                        }
+                      ]
+                    },
+                    "pagination": {
+                      "current_page": 1,
+                      "next_page": 2,
+                      "prev_page": null,
+                      "total_pages": 5,
+                      "total_count": 120,
+                      "per_page": 25
+                    }
+                  }
+                },
+                "empty": {
+                  "summary": "No tents found with the filters",
+                  "value": {
+                    "barracas": [],
+                    "included": {
+                      "praias": [],
+                      "status_barracas": [],
+                      "tipo_barracas": [],
+                      "tipo_area_coberturas": []
+                    },
+                    "pagination": {
+                      "current_page": 1,
+                      "next_page": null,
+                      "prev_page": null,
+                      "total_pages": 0,
+                      "total_count": 0,
+                      "per_page": 25
+                    }
+                  }
+                }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/barracas_openapi/{id}": {
+      "get": {
+        "operationId": "tent",
+        "summary": "Get beach tent by ID",
+        "description": "Returns single tent with all attributes.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Tent ID",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tent found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarracaOpenapi"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Barraca Bar & Mar",
+                  "number": "112",
+                  "license": "[LICENCA112Ipanema]",
+                  "tax_id": "05477232706",
+                  "pix_key": null,
+                  "latitude": "-22.986907958984375",
+                  "longitude": "-43.20489501953125",
+                  "beach_id": 1,
+                  "status": "open",
+                  "type_id": 1,
+                  "coverage_type_id": 1
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tent not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Barraca not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/praias_openapi": {
+      "get": {
+        "operationId": "beaches",
+        "summary": "Search beaches",
+        "description": "Returns beaches. Response: {praias: [], included: {}, pagination: {}}.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by beach name (contains, case-insensitive)",
+            "example": "Ipanema"
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by city name (contains, case-insensitive)",
+            "example": "Rio"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string",
+              "maxLength": 3
+            },
+            "description": "Filter by state code (exact match)",
+            "example": "RJ"
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "city", "state"]
+            },
+            "description": "Field to sort by",
+            "example": "name"
+          },
+          {
+            "in": "query",
+            "name": "sort_direction",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            },
+            "description": "Sort direction (ascending or descending)",
+            "example": "asc"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 25
+            },
+            "description": "Items per page",
+            "example": 25
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of beaches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "praias": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PraiaOpenapi"
+                      }
+                    },
+                    "included": {
+                      "type": "object",
+                      "description": "Included resources (empty - no relations)",
+                      "properties": {}
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Multiple beaches",
+                    "value": {
+                      "praias": [
+                      {
+                        "id": 1,
+                        "name": "Ipanema",
+                        "city": "Rio de Janeiro",
+                        "state": "RJ"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Copacabana",
+                        "city": "Rio de Janeiro",
+                        "state": "RJ"
+                      }
+                    ],
+                      "included": {},
+                      "pagination": {
+                        "current_page": 1,
+                        "next_page": null,
+                        "prev_page": null,
+                        "total_pages": 1,
+                        "total_count": 2,
+                        "per_page": 25
+                      }
+                    }
+                  },
+                  "empty": {
+                    "summary": "No beaches found",
+                    "value": {
+                      "praias": [],
+                      "included": {},
+                      "pagination": {
+                        "current_page": 1,
+                        "next_page": null,
+                        "prev_page": null,
+                        "total_pages": 0,
+                        "total_count": 0,
+                        "per_page": 25
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/praias_openapi/{id}": {
+      "get": {
+        "operationId": "beach",
+        "summary": "Get beach by ID",
+        "description": "Returns single beach.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Beach ID",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Beach found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraiaOpenapi"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Ipanema",
+                  "city": "Rio de Janeiro",
+                  "state": "RJ"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Beach not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Praia not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BarracaOpenapi": {
+        "type": "object",
+        "required": ["id", "name"],
+        "description": "Beach tent object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier",
+            "example": 123
+          },
+          "name": {
+            "type": "string",
+            "description": "Tent name",
+            "example": "Barraca do João Russo"
+          },
+          "number": {
+            "type": "string",
+            "nullable": true,
+            "description": "License number",
+            "example": "001/2023"
+          },
+          "license": {
+            "type": "string",
+            "nullable": true,
+            "description": "License identifier",
+            "example": "LIC-12345"
+          },
+          "tax_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Owner's tax ID (CPF/CNPJ)",
+            "example": "12345678901"
+          },
+          "pix_key": {
+            "type": "string",
+            "nullable": true,
+            "description": "PIX payment key",
+            "example": "12345678901"
+          },
+          "latitude": {
+            "type": "string",
+            "nullable": true,
+            "description": "Latitude coordinate",
+            "example": "-22.986907958984375"
+          },
+          "longitude": {
+            "type": "string",
+            "nullable": true,
+            "description": "Longitude coordinate",
+            "example": "-43.20489501953125"
+          },
+          "order": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Display order",
+            "example": 1
+          },
+          "commission_percentage": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Commission percentage",
+            "example": 10.5
+          },
+          "card_commission_percentage": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Card commission percentage",
+            "example": 3.5
+          },
+          "delivery_radius": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Delivery radius in meters",
+            "example": 500
+          },
+          "delivery_fee": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Delivery fee",
+            "example": 5.0
+          },
+          "service_fee": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Service fee",
+            "example": 10.0
+          },
+          "qr_code_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "QR Code URL",
+            "example": "https://example.com/qrcode.png"
+          },
+          "qr_code_backup_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "QR Code backup URL",
+            "example": "https://example.com/qrcode-backup.png"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Creation timestamp",
+            "example": "2023-05-01T12:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "closed", "paused", "inactive", "unknown"],
+            "description": "Status",
+            "example": "open"
+          },
+          "beach_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Beach ID (see included.praias)",
+            "example": 1
+          },
+          "type_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Tent type ID (see included.tipo_barracas)",
+            "example": 1
+          },
+          "coverage_type_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Coverage type ID (see included.tipo_area_coberturas)",
+            "example": 1
+          }
+        }
+      },
+      "IncludedResources": {
+        "type": "object",
+        "description": "Related entities (JSON:API pattern)",
+        "properties": {
+          "praias": {
+            "type": "array",
+            "description": "Referenced beaches",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Ipanema"
+                },
+                "city": {
+                  "type": "string",
+                  "example": "Rio de Janeiro"
+                },
+                "state": {
+                  "type": "string",
+                  "example": "RJ"
+                }
+              }
+            }
+          },
+          "status_barracas": {
+            "type": "array",
+            "description": "Status types",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 4
+                },
+                "status": {
+                  "type": "string",
+                  "example": "Aberta"
+                },
+                "status_en": {
+                  "type": "string",
+                  "example": "open"
+                }
+              }
+            }
+          },
+          "tipo_barracas": {
+            "type": "array",
+            "description": "Tent types",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Quiosque"
+                }
+              }
+            }
+          },
+          "tipo_area_coberturas": {
+            "type": "array",
+            "description": "Coverage area types",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Cobertura Total"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Barraca": {
+        "type": "object",
+        "required": [
+          "Id",
+          "Nome"
+        ],
+        "description": "Beach tent with nested relations",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "description": "Unique identifier",
+            "example": 123
+          },
+          "Nome": {
+            "type": "string",
+            "description": "Barraca name",
+            "example": "Barraca do João Russo"
+          },
+          "Numero": {
+            "type": "string",
+            "nullable": true,
+            "description": "License number",
+            "example": "001/2023"
+          },
+          "Licenca": {
+            "type": "string",
+            "nullable": true,
+            "description": "License identifier",
+            "example": "LIC-12345"
+          },
+          "CpfCnpj": {
+            "type": "string",
+            "nullable": true,
+            "description": "Owner's tax ID",
+            "example": "12345678901"
+          },
+          "ChavePix": {
+            "type": "string",
+            "nullable": true,
+            "description": "PIX key",
+            "example": "12345678901"
+          },
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Latitude coordinate",
+            "example": -22.9868
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Longitude coordinate",
+            "example": -43.2040
+          },
+          "PraiaId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Beach ID",
+            "example": 1
+          },
+          "StatusBarracaId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Status ID",
+            "example": 1
+          },
+          "TipoBarracaId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Type ID",
+            "example": 1
+          },
+          "TipoAreaCoberturaId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Coverage area type ID",
+            "example": 1
+          },
+          "PercentualComissao": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Commission %",
+            "example": 10.5
+          },
+          "PercentualComissaoCartao": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Card commission %",
+            "example": 3.5
+          },
+          "TaxaEntrega": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Delivery fee",
+            "example": 5.0
+          },
+          "TaxaServico": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Service fee",
+            "example": 10.0
+          },
+          "RaioEntrega": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Delivery radius in meters",
+            "example": 500
+          },
+          "Ordem": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Display order",
+            "example": 1
+          },
+          "DataInclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Creation date",
+            "example": "2023-05-01T12:00:00Z"
+          },
+          "UrlQrCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "QR Code URL",
+            "example": "https://example.com/qrcode.png"
+          },
+          "UrlQrCodeBackup": {
+            "type": "string",
+            "nullable": true,
+            "description": "QR Code backup URL",
+            "example": "https://example.com/qrcode-backup.png"
+          },
+          "praia": {
+            "type": "object",
+            "nullable": true,
+            "description": "Nested beach",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "Beach ID"
+              },
+              "Nome": {
+                "type": "string",
+                "description": "Beach name"
+              },
+              "Cidade": {
+                "type": "string",
+                "description": "City"
+              },
+              "Uf": {
+                "type": "string",
+                "description": "State (UF)"
+              }
+            }
+          },
+          "status_barraca": {
+            "type": "object",
+            "nullable": true,
+            "description": "Nested status",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "Status ID"
+              },
+              "Nome": {
+                "type": "string",
+                "description": "Status name"
+              }
+            }
+          },
+          "tipo_barraca": {
+            "type": "object",
+            "nullable": true,
+            "description": "Nested type",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "Type ID"
+              },
+              "Nome": {
+                "type": "string",
+                "description": "Type name"
+              }
+            }
+          },
+          "tipo_area_cobertura": {
+            "type": "object",
+            "nullable": true,
+            "description": "Nested coverage type",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "Coverage type ID"
+              },
+              "Nome": {
+                "type": "string",
+                "description": "Coverage type name"
+              }
+            }
+          }
+        }
+      },
+      "PraiaOpenapi": {
+        "type": "object",
+        "required": ["id", "name"],
+        "description": "Beach object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Beach name",
+            "example": "Ipanema"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "description": "City name",
+            "example": "Rio de Janeiro"
+          },
+          "state": {
+            "type": "string",
+            "nullable": true,
+            "description": "State code (UF)",
+            "example": "RJ"
+          }
+        }
+      },
+      "Praia": {
+        "type": "object",
+        "required": [
+          "Id",
+          "Nome"
+        ],
+        "description": "Beach object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "description": "ID",
+            "example": 1
+          },
+          "Nome": {
+            "type": "string",
+            "maxLength": 70,
+            "description": "Beach name",
+            "example": "Ipanema"
+          },
+          "Cidade": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true,
+            "description": "City name",
+            "example": "Rio de Janeiro"
+          },
+          "Uf": {
+            "type": "string",
+            "maxLength": 3,
+            "nullable": true,
+            "description": "State code",
+            "example": "RJ"
+          }
+        }
+      },
+      "PraiaRansackQuery": {
+        "type": "object",
+        "description": "Ransack query: q[attr_pred]=value. Predicates: _eq, _cont, _start, _end, _in. Attrs: Id, Nome, Cidade, Uf",
+        "properties": {
+          "Id_eq": {
+            "type": "integer",
+            "description": "Id equal to",
+            "example": 1
+          },
+          "Id_in": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Id in list",
+            "example": [1, 2, 3]
+          },
+          "Nome_cont": {
+            "type": "string",
+            "description": "Nome contains (case-insensitive)",
+            "example": "ipanema"
+          },
+          "Nome_eq": {
+            "type": "string",
+            "description": "Nome equal to",
+            "example": "Ipanema"
+          },
+          "Nome_start": {
+            "type": "string",
+            "description": "Nome starts with",
+            "example": "Ipa"
+          },
+          "Nome_end": {
+            "type": "string",
+            "description": "Nome ends with",
+            "example": "nema"
+          },
+          "Cidade_cont": {
+            "type": "string",
+            "description": "Cidade contains (case-insensitive)",
+            "example": "rio"
+          },
+          "Cidade_eq": {
+            "type": "string",
+            "description": "Cidade equal to",
+            "example": "Rio de Janeiro"
+          },
+          "Uf_eq": {
+            "type": "string",
+            "description": "Uf equal to",
+            "example": "RJ"
+          },
+          "Uf_in": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Uf in list",
+            "example": ["RJ", "SP", "BA"]
+          }
+        }
+      },
+      "RansackQuery": {
+        "type": "object",
+        "description": "Ransack query: q[attr_pred]=value. Predicates: _eq, _cont, _start, _end, _gteq, _lteq, _gt, _lt, _in",
+        "properties": {
+          "Id_eq": {
+            "type": "integer",
+            "description": "Id equal to",
+            "example": 123
+          },
+          "Nome_cont": {
+            "type": "string",
+            "description": "Nome contains (case-insensitive)",
+            "example": "russo"
+          },
+          "Nome_eq": {
+            "type": "string",
+            "description": "Nome equal to",
+            "example": "Barraca do João Russo"
+          },
+          "Nome_start": {
+            "type": "string",
+            "description": "Nome starts with",
+            "example": "Barraca"
+          },
+          "Nome_end": {
+            "type": "string",
+            "description": "Nome ends with",
+            "example": "Russo"
+          },
+          "Numero_cont": {
+            "type": "string",
+            "description": "Numero contains",
+            "example": "001"
+          },
+          "Licenca_cont": {
+            "type": "string",
+            "description": "Licenca contains",
+            "example": "LIC"
+          },
+          "CpfCnpj_eq": {
+            "type": "string",
+            "description": "CpfCnpj equal to",
+            "example": "12345678901"
+          },
+          "ChavePix_cont": {
+            "type": "string",
+            "description": "ChavePix contains",
+            "example": "12345"
+          },
+          "PraiaId_eq": {
+            "type": "integer",
+            "description": "PraiaId equal to",
+            "example": 1
+          },
+          "PraiaId_in": {
+            "type": "string",
+            "description": "PraiaId in list (comma-separated)",
+            "example": "1,2,3"
+          },
+          "Latitude_eq": {
+            "type": "number",
+            "format": "double",
+            "description": "Latitude equal to",
+            "example": -22.9868
+          },
+          "Latitude_gteq": {
+            "type": "number",
+            "format": "double",
+            "description": "Latitude greater than or equal to",
+            "example": -23.0
+          },
+          "Latitude_lteq": {
+            "type": "number",
+            "format": "double",
+            "description": "Latitude less than or equal to",
+            "example": -22.8
+          },
+          "Longitude_eq": {
+            "type": "number",
+            "format": "double",
+            "description": "Longitude equal to",
+            "example": -43.2040
+          },
+          "Longitude_gteq": {
+            "type": "number",
+            "format": "double",
+            "description": "Longitude greater than or equal to",
+            "example": -43.5
+          },
+          "Longitude_lteq": {
+            "type": "number",
+            "format": "double",
+            "description": "Longitude less than or equal to",
+            "example": -43.2
+          },
+          "StatusBarracaId_eq": {
+            "type": "integer",
+            "description": "StatusBarracaId equal to",
+            "example": 1
+          },
+          "TipoBarracaId_eq": {
+            "type": "integer",
+            "description": "TipoBarracaId equal to",
+            "example": 1
+          },
+          "TipoAreaCoberturaId_eq": {
+            "type": "integer",
+            "description": "TipoAreaCoberturaId equal to",
+            "example": 1
+          },
+          "PercentualComissao_eq": {
+            "type": "number",
+            "format": "float",
+            "description": "PercentualComissao equal to",
+            "example": 10.5
+          },
+          "PercentualComissao_gteq": {
+            "type": "number",
+            "format": "float",
+            "description": "PercentualComissao greater than or equal to",
+            "example": 10.0
+          },
+          "PercentualComissao_lteq": {
+            "type": "number",
+            "format": "float",
+            "description": "PercentualComissao less than or equal to",
+            "example": 15.0
+          },
+          "PercentualComissaoCartao_gteq": {
+            "type": "number",
+            "format": "float",
+            "description": "PercentualComissaoCartao greater than or equal to",
+            "example": 3.0
+          },
+          "TaxaEntrega_eq": {
+            "type": "number",
+            "format": "float",
+            "description": "TaxaEntrega equal to",
+            "example": 5.0
+          },
+          "TaxaEntrega_gteq": {
+            "type": "number",
+            "format": "float",
+            "description": "TaxaEntrega greater than or equal to",
+            "example": 5.0
+          },
+          "TaxaEntrega_lteq": {
+            "type": "number",
+            "format": "float",
+            "description": "TaxaEntrega less than or equal to",
+            "example": 10.0
+          },
+          "TaxaServico_gteq": {
+            "type": "number",
+            "format": "float",
+            "description": "TaxaServico greater than or equal to",
+            "example": 10.0
+          },
+          "TaxaServico_lteq": {
+            "type": "number",
+            "format": "float",
+            "description": "TaxaServico less than or equal to",
+            "example": 20.0
+          },
+          "RaioEntrega_eq": {
+            "type": "integer",
+            "description": "RaioEntrega equal to (meters)",
+            "example": 500
+          },
+          "RaioEntrega_gteq": {
+            "type": "integer",
+            "description": "RaioEntrega greater than or equal to (meters)",
+            "example": 500
+          },
+          "RaioEntrega_lteq": {
+            "type": "integer",
+            "description": "RaioEntrega less than or equal to (meters)",
+            "example": 1000
+          },
+          "Ordem_eq": {
+            "type": "integer",
+            "description": "Ordem equal to",
+            "example": 1
+          },
+          "DataInclusao_eq": {
+            "type": "string",
+            "format": "date-time",
+            "description": "DataInclusao equal to (ISO 8601)",
+            "example": "2023-05-01T12:00:00Z"
+          },
+          "DataInclusao_gteq": {
+            "type": "string",
+            "format": "date-time",
+            "description": "DataInclusao greater than or equal to (ISO 8601)",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "DataInclusao_lteq": {
+            "type": "string",
+            "format": "date-time",
+            "description": "DataInclusao less than or equal to (ISO 8601)",
+            "example": "2023-12-31T23:59:59Z"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Pagination": {
+        "type": "object",
+        "description": "Pagination information",
+        "properties": {
+          "current_page": {
+            "type": "integer",
+            "description": "Current page number",
+            "example": 1
+          },
+          "next_page": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Next page (null if last)",
+            "example": 2
+          },
+          "prev_page": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Previous page (null if first)",
+            "example": null
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 5
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total items",
+            "example": 120
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 25
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "message"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error code",
+            "enum": [
+              "bad_request",
+              "unauthorized",
+              "not_found",
+              "internal_server_error"
+            ],
+            "example": "bad_request"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Parâmetro inválido"
+          },
+          "details": {
+            "type": "object",
+            "nullable": true,
+            "description": "Additional details",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}
