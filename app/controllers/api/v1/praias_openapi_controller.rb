@@ -10,8 +10,13 @@ module Api
 
         @q = Praia.ransack(ransack_params)
         @praias = @q.result
+                    .page(params[:page])
+                    .per(params[:per_page] || 25)
 
-        render json: @praias, each_serializer: PraiaSerializer
+        render json: {
+          praias: ActiveModelSerializers::SerializableResource.new(@praias, each_serializer: PraiaSerializer),
+          pagination: PaginationSerializer.new(@praias)
+        }
       end
 
       # GET /api/v1/praias_openapi/:id

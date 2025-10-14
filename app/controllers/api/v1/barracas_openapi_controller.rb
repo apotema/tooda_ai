@@ -11,8 +11,13 @@ module Api
         @q = Barraca.ransack(ransack_params)
         @barracas = @q.result
                       .includes(:praia, :status_barraca, :tipo_area_cobertura, :tipo_barraca)
+                      .page(params[:page])
+                      .per(params[:per_page] || 25)
 
-        render json: @barracas, each_serializer: BarracaSerializer
+        render json: {
+          barracas: ActiveModelSerializers::SerializableResource.new(@barracas, each_serializer: BarracaSerializer),
+          pagination: PaginationSerializer.new(@barracas)
+        }
       end
 
       # GET /api/v1/barracas_openapi/:id
